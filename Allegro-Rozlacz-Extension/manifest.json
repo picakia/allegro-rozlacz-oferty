@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "version": "1.0",
+  "name": "Allegro przywróć rozłączanie ofert",
+  "content_scripts": [
+    {
+      "matches": ["*://*.allegro.pl/*"],
+      "js": ["main.js"]
+    }
+  ],
+  "permissions": ["*://*.allegrolokalnie.pl/*", "*://*.allegro.pl/*"],
+  "background": {
+    "scripts": ["bg_page.js"],
+    "persistent": false
+  }
+}
