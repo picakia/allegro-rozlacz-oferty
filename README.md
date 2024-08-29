@@ -1,4 +1,4 @@
-# Allegro-rozlacz-oferty
+# Allegro rozłącz oferty
 
 Projekt mający na celu próbę przywrócenia rozłączania ofert allegro. Aktualnie dostępny jest userscript `AllegroRozlacz.js` do załadowania w menadżerze skryptów, np. Tampermonkey i wstępna wersja rozszerzenia do przeglądarki używając manifest V2
 
