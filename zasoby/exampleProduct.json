@@ -1,0 +1,329 @@
+{
+  "type": "buyNow_auction",
+  "badges": {
+    "logistics": {
+      "additionalInfo": {
+        "text": "dostawa pt. 11 paź.",
+        "strikeThrough": false,
+        "bold": true
+      },
+      "labels": [
+        {
+          "labelParts": [
+            {
+              "text": "dostawa pt. 11 paź.",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "text.secondary"
+                  },
+                  "dark": {
+                    "textColor": "text.secondary"
+                  }
+                },
+                "textAttributes": {
+                  "bold": true,
+                  "strikethrough": false
+                }
+              }
+            },
+            {
+              "icon": {
+                "sources": {
+                  "svg": {
+                    "url": "https://assets.allegrostatic.com/fast-delivery-icons/information.svg",
+                    "darkModeUrl": "https://assets.allegrostatic.com/fast-delivery-icons/information-dark.svg"
+                  },
+                  "png": {
+                    "url": "https://assets.allegrostatic.com/fast-delivery-icons/information.png",
+                    "darkModeUrl": "https://assets.allegrostatic.com/fast-delivery-icons/information-dark.png"
+                  }
+                }
+              },
+              "contextInfo": {
+                "text": "Przewidywany przez Allegro czas dostawy na podstawie wcześniejszych dostaw sprzedającego."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "categoryPath": [
+    {
+      "id": "42540aec-367a-4e5e-b411-17c09b08e41f"
+    },
+    {
+      "id": "10"
+    },
+    {
+      "id": "67414"
+    },
+    {
+      "id": "67416"
+    },
+    {
+      "id": "67466"
+    },
+    {
+      "id": "256019"
+    }
+  ],
+  "navigationCategory": {
+    "id": "256019",
+    "tree": "navigation-pl"
+  },
+  "assortmentCategory": {
+    "id": "256019",
+    "path": [
+      {
+        "id": "42540aec-367a-4e5e-b411-17c09b08e41f"
+      },
+      {
+        "id": "10"
+      },
+      {
+        "id": "67414"
+      },
+      {
+        "id": "67416"
+      },
+      {
+        "id": "67466"
+      },
+      {
+        "id": "256019"
+      }
+    ]
+  },
+  "ended": false,
+  "freebox": {
+    "id": "FREEBOX",
+    "alt": "Smart!",
+    "labels": [
+      {
+        "labelParts": [
+          {
+            "text": "Smart!",
+            "icon": {
+              "id": "FREEBOX_NOMARGIN",
+              "alt": "Smart!",
+              "sources": {
+                "svg": {
+                  "url": "https://a.allegroimg.com/original/343b4d/ed3f5c04412ab7bd70dd0a34f0cd/brand-subbrand-smart-d8bfa93f10.svg",
+                  "darkModeUrl": "https://a.allegroimg.com/original/34611c/c433ab0c4bf9a76e4f1f15b5dd1f/dark-brand-subbrand-smart-2ecf1fa38c.svg"
+                },
+                "png": {
+                  "url": "https://assets.allegrostatic.com/freebox/icons/FREEBOX_NOMARGIN_V2.png",
+                  "darkModeUrl": "https://assets.allegrostatic.com/freebox/icons/FREEBOX_NOMARGIN_V2_DARK.png"
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "id": "16626453991",
+  "images": [
+    {
+      "url": "https://a.allegroimg.com/original/11d5f7/3a2007864641a2f7536232b1ef41/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY"
+    },
+    {
+      "url": "https://a.allegroimg.com/original/110be0/62c4f3404681bae934279783a53e/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Marka-Roborock"
+    },
+    {
+      "url": "https://a.allegroimg.com/original/1195a4/6922a4684fd28362f4daccaba5e9/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Kolor-dominujacy-czarny"
+    },
+    {
+      "url": "https://a.allegroimg.com/original/11963d/303b5ba34fe6b9e598d159d53de1/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Model-S7-MaxV-Ultra"
+    },
+    {
+      "url": "https://a.allegroimg.com/original/112ea3/3985dd0a453fb780469b35b709ee/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Typ-akumulatora-litowo-jonowy"
+    },
+    {
+      "url": "https://a.allegroimg.com/original/11b975/4c17ab294cdfb5c4e70af200017b/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Napiecie-akumulatora-14-4-V"
+    },
+    {
+      "url": "https://a.allegroimg.com/original/11f91f/4620f6c743b993b6896d45ac1e45/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Moc-74-W"
+    }
+  ],
+  "itemContext": "FEATURED",
+  "name": "ROBOT SPRZĄTAJĄCY ROBOROCK S7 MAXV ULTRA CZARNY",
+  "labelType": "best-offer",
+  "openInNewTab": false,
+  "parameters": [
+    {
+      "name": "Stan",
+      "values": ["Używany"],
+      "highlight": false
+    },
+    {
+      "name": "Gwarancja",
+      "values": ["3 miesiące"],
+      "highlight": false
+    }
+  ],
+  "promotion": {
+    "emphasized": false,
+    "bold": false,
+    "highlight": false
+  },
+  "publication": {
+    "endingTime": "2024-10-10T12:47:49.000Z"
+  },
+  "seller": {
+    "id": "24160433",
+    "title": "Firma",
+    "superSeller": false,
+    "login": "kkandtech",
+    "userListingUrl": "https://allegro.pl/uzytkownik/kkandtech",
+    "positiveFeedbackPercent": 98.7,
+    "positiveFeedbackCount": 1912,
+    "positiveFeedbackIcon": false,
+    "company": true
+  },
+  "sellingMode": {
+    "buyNow": {
+      "price": {
+        "amount": "3965.56",
+        "currency": "PLN"
+      },
+      "popularity": 0,
+      "cartAvailable": true
+    },
+    "auction": {
+      "price": {
+        "amount": "3565.04",
+        "currency": "PLN"
+      },
+      "bidCount": 0
+    },
+    "popularityLabel": "nikt nie licytuje",
+    "popularity": {
+      "label": "nikt nie licytuje",
+      "tooltip": null
+    },
+    "isBestPriceGuarantee": false
+  },
+  "shipping": {
+    "freeDelivery": false,
+    "freeReturn": false,
+    "lowest": {
+      "amount": "14.99",
+      "currency": "PLN"
+    },
+    "itemWithDelivery": {
+      "amount": "3580.03",
+      "currency": "PLN"
+    },
+    "summary": {
+      "labels": [
+        {
+          "text": "Dostawa od 14,99 zł",
+          "bold": true
+        },
+        {
+          "text": "Przewidywana dostawa: pt. 11 paź.",
+          "bold": false
+        }
+      ]
+    }
+  },
+  "photos": [
+    {
+      "small": "https://a.allegroimg.com/s64/11d5f7/3a2007864641a2f7536232b1ef41/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY",
+      "medium": "https://a.allegroimg.com/s360/11d5f7/3a2007864641a2f7536232b1ef41/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/110be0/62c4f3404681bae934279783a53e/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Marka-Roborock",
+      "medium": "https://a.allegroimg.com/s360/110be0/62c4f3404681bae934279783a53e/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Marka-Roborock"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/1195a4/6922a4684fd28362f4daccaba5e9/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Kolor-dominujacy-czarny",
+      "medium": "https://a.allegroimg.com/s360/1195a4/6922a4684fd28362f4daccaba5e9/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Kolor-dominujacy-czarny"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11963d/303b5ba34fe6b9e598d159d53de1/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Model-S7-MaxV-Ultra",
+      "medium": "https://a.allegroimg.com/s360/11963d/303b5ba34fe6b9e598d159d53de1/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Model-S7-MaxV-Ultra"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/112ea3/3985dd0a453fb780469b35b709ee/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Typ-akumulatora-litowo-jonowy",
+      "medium": "https://a.allegroimg.com/s360/112ea3/3985dd0a453fb780469b35b709ee/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Typ-akumulatora-litowo-jonowy"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11b975/4c17ab294cdfb5c4e70af200017b/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Napiecie-akumulatora-14-4-V",
+      "medium": "https://a.allegroimg.com/s360/11b975/4c17ab294cdfb5c4e70af200017b/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Napiecie-akumulatora-14-4-V"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11f91f/4620f6c743b993b6896d45ac1e45/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Moc-74-W",
+      "medium": "https://a.allegroimg.com/s360/11f91f/4620f6c743b993b6896d45ac1e45/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY-Moc-74-W"
+    }
+  ],
+  "productReview": {
+    "rating": {
+      "average": "4.89",
+      "count": 91
+    }
+  },
+  "seo": {
+    "nofollow": false
+  },
+  "mainThumbnail": "https://a.allegroimg.com/s180/11d5f7/3a2007864641a2f7536232b1ef41/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY",
+  "mainThumbnailSizes": {
+    "large": {
+      "url": "https://a.allegroimg.com/s720/11d5f7/3a2007864641a2f7536232b1ef41/ROBOT-SPRZATAJACY-ROBOROCK-S7-MAXV-ULTRA-CZARNY"
+    }
+  },
+  "url": "https://allegro.pl/oferta/robot-sprzatajacy-roborock-s7-maxv-ultra-czarny-16626453991",
+  "quantity": {
+    "unitType": "UNIT",
+    "value": 1
+  },
+  "vendor": "allegro",
+  "labels": {
+    "regularLabel": {
+      "text": "LICYTACJA",
+      "icon": null
+    },
+    "charityLabel": null
+  },
+  "visibleLabel": "Najlepsza oferta",
+  "analytics": {
+    "itemView": [
+      {
+        "name": "deliverylabel",
+        "value": "dostawa pt. 11 paź."
+      }
+    ]
+  },
+  "featured": true,
+  "generalParameters": [
+    {
+      "name": "Stan",
+      "values": ["Używany"],
+      "highlight": false
+    },
+    {
+      "name": "Gwarancja",
+      "values": ["3 miesiące"],
+      "highlight": false
+    }
+  ],
+  "productRepresentativeParameters": [],
+  "productDetails": {
+    "productId": "6f24dc1c-1e79-4317-ac20-5b94de09560f",
+    "productName": "Robot sprzątający Roborock S7 MaxV Ultra czarny",
+    "representativeOfferId": "16626453991",
+    "variantsDetails": null
+  },
+  "offerId": "16626453991",
+  "productizationLinks": {
+    "seoLink": null,
+    "productPage": null
+  },
+  "hasInfoBox": false,
+  "sponsored": false,
+  "product": false,
+  "promoted": false
+}
