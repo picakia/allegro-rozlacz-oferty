@@ -24,4 +24,7 @@ Ewentualnie działa też sortowanie po najwyższej cenie, w tym celu **przed kli
 
 ## Co dalej?
 
-No ogólnie to fajnie by było nie scrapować całych htmli tylko przebić się po opbox API, ale nie wiem o ile to się uda. Dobrze by było skończyć też to rozszerzenie i wrzucić do web storów, ale to jeszcze dużo opcji trzeba by dodać, a że czasu nie mam za dużo to nie wiem jak mi pójdzie. Jak ktoś jest chętny pomóc to zapraszam do Pull requestów, może wtedy pójdzie szybciej i lepiej.
+- ~No ogólnie to fajnie by było nie scrapować całych htmli tylko przebić się po opbox API, ale nie wiem o ile to się uda.~ Branch V2 już się przebija! 
+- Dobrze by było skończyć też to rozszerzenie i wrzucić do web storów, ale to jeszcze dużo opcji trzeba by dodać, a że czasu nie mam za dużo to nie wiem jak mi pójdzie. 
+- Jak ktoś jest chętny pomóc to zapraszam do Pull requestów, może wtedy pójdzie szybciej i lepiej.
+
