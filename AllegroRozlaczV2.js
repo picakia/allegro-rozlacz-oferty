@@ -4,10 +4,27 @@
 // @version      2024-10-07
 // @description  try to take over Allegro.pl
 // @author       You
-// @match        https://allegro.pl/*
+// @match        https://allegro.pl/kategoria/*
+// @match        https://allegro.pl/listing*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=allegro.pl
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
+
+let progressPercent = 0;
+let articleList = [];
+const getDOM = () => {
+  return {
+    progressBar: {
+      box: document.querySelector('[data-box-name="premium.with.dfp"]'),
+      div: document.getElementById('myProgress'),
+      bar: document.getElementById('myBar'),
+      text: document.getElementById('progressText'),
+    },
+    rozlaczButton: document.getElementById('myButton'),
+    mainArticles: document.querySelector('.opbox-listing > div'),
+    pagination: document.querySelector('[aria-label="paginacja"] > span'),
+  };
+};
 
 const getOpboxJSON = async (link) => {
   // Find
@@ -33,313 +50,251 @@ const getOpboxJSON = async (link) => {
     return {};
   }
 };
-
 const daysTillEnd = (endDate) => {
   const millisecondsPerDay = 24 * 60 * 60 * 1000;
   return Math.round((new Date(endDate) - new Date()) / millisecondsPerDay);
 };
-let restore = async () => {
-  document.querySelector('[data-box-name="premium.with.dfp"]').innerHTML =
+// Custom format for product
+const generateProduct = (listingData) => {
+  //console.log(listingData);
+  if (listingData.isLocal) {
+    return {};
+  }
+  let parsedProduct = {};
+  try {
+    parsedProduct = {
+      url: new URL(listingData.url).pathname,
+      name: listingData.name,
+      mainImg: listingData.mainThumbnail,
+      seller: {
+        isCompany: listingData.seller.company,
+        isSuperSeller: listingData.seller.superSeller,
+        login: listingData.seller.login,
+        positiveFeedbackPercent: listingData.seller.positiveFeedbackPercent,
+        positiveFeedbackCount:
+          listingData.seller.positiveFeedbackCount || 'brak',
+      },
+      isSmart: listingData.freebox ? true : false,
+      productState: listingData.parameters[0].values[0],
+      whenDelivery:
+        listingData.badges?.logistics?.additionalInfo?.text ||
+        listingData.shipping.summary?.labels[0]?.text,
+      priceShipping: listingData.shipping.itemWithDelivery.amount,
+      popularityLabel: listingData.sellingMode.popularityLabel,
+      isBidding: listingData.sellingMode.auction ? true : false,
+      price: listingData.sellingMode.buyNow?.price?.amount || '0.0',
+      isBiddingBuyNow: false,
+      biddingBuyNowPrice: 0,
+      biddingTimeLeft: 0,
+      endingTime: listingData.publication?.endingTime,
+    };
+    if (parsedProduct.whenDelivery.includes('jutro')) {
+      parsedProduct.whenDelivery = `${
+        parsedProduct.whenDelivery.split('dostawa jutro')[0]
+      }<span class="mli2_0" style="color: rgb(27, 184, 40); font-weight: bold; text-decoration: none;">dostawa jutro</span>`;
+    }
+    if (parsedProduct.isBidding) {
+      parsedProduct.isBiddingBuyNow = listingData.sellingMode.buyNow
+        ? true
+        : false;
+      parsedProduct.biddingBuyNowPrice =
+        listingData.sellingMode.buyNow?.price?.amount || '0.0';
+      parsedProduct.price = listingData.sellingMode.auction.price.amount;
+      parsedProduct.biddingTimeLeft = daysTillEnd(
+        listingData.publication.endingTime
+      );
+    }
+  } catch (err) {
+    console.log(listingData);
+    console.error('Error when parsing article: ', err);
+    getDOM().progressBar.text.innerText = `Error when parsing article ${err.message}`;
+  }
+  //console.log({ parsedProduct });
+  return parsedProduct;
+};
+
+const processProductPage = async (
+  DOM,
+  productLink,
+  currentPage,
+  productName
+) => {
+  let opbox = await getOpboxJSON(productLink);
+  const pagination =
+    opbox.dataSources['listing-api-v3:allegro.listing:3.0'].metadata.Pageable;
+  const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize);
+  for (let i = 1; i <= totalPages; i++) {
+    DOM.progressBar.text.innerText = `[PAGE ${currentPage}] Restoring offers for ${productName} - nested level ${i}`;
+    console.log(DOM.progressBar.text.innerText);
+    if (i > 1) {
+      const nextLink = new URL(productLink);
+      nextLink.searchParams.set('p', i);
+      opbox = await getOpboxJSON(nextLink);
+    }
+    const nestedProducts = opbox.dataSources[
+      'listing-api-v3:allegro.listing:3.0'
+    ].data.elements.filter((el) => el.type != 'label' && el.type != 'banner');
+
+    for (const nestedArticle of nestedProducts) {
+      const parsedProduct = generateProduct(nestedArticle);
+      articleList.push(parsedProduct);
+    }
+  }
+};
+
+const processSearchResults = async (
+  DOM,
+  queryParams,
+  nextLink,
+  pageCount,
+  currentPage
+) => {
+  const progressSplit = Math.floor(100 / pageCount);
+  const opbox = await getOpboxJSON(nextLink);
+  const productsToProcess = opbox.dataSources[
+    'listing-web-bff:allegro.listing:3.0'
+  ].data.elements.filter((el) => el.type != 'label' && el.type != 'banner');
+
+  const productsCount = productsToProcess.length;
+
+  // loop through each article
+  let promiseArrayPrd = [];
+  for (const [index, article] of productsToProcess.entries()) {
+    // Loading Bar management
+    const progressPercent =
+      progressSplit * (currentPage - 1) +
+      Math.floor((progressSplit / productsToProcess.length) * index);
+    DOM.progressBar.bar.style.width = progressPercent + '%';
+    DOM.progressBar.bar.innerText = progressPercent + '%';
+    console.log(`Bar width: ${progressPercent}%`);
+    DOM.progressBar.text.innerText = `[PAGE ${currentPage}] Restoring offers for ${article.name} - nested level 0`;
+    console.log(DOM.progressBar.text.innerText);
+
+    const articleLink = article.links?.[0]?.url;
+    if (!articleLink) {
+      // Article does not have "Porównaj x ofert" button
+      const isLocal = article.url.includes('https://allegrolokalnie.pl/');
+      if (isLocal) {
+        continue;
+        console.log(`LOCAL OFFER: article.url`);
+      }
+
+      const parsedProduct = generateProduct(article);
+
+      // Add product to array
+      articleList.push(parsedProduct);
+      continue;
+    }
+
+    // Generate link for product page
+    let fetchLink = `${articleLink}&${queryParams}`;
+    if (!articleLink.includes('?')) {
+      fetchLink = `${articleLink}?${queryParams}`;
+    }
+
+    // Get products using recursive fn
+      await processProductPage(DOM, fetchLink, currentPage, article.name)
+
+    // Experimental - 429
+    /*promiseArrayPrd.push(
+      processProductPage(DOM, fetchLink, currentPage, article.name)
+    );*/
+  }
+  //await Promise.all(promiseArrayPrd);
+};
+
+const restore = async () => {
+  let DOM = getDOM();
+  // ProgressBar95
+  DOM.progressBar.box.innerHTML =
     '<div id="myProgress" style="padding: 1vh;height: 100%;font-weight: 600;text-align: center;color: #ffffffde;font-family: Open Sans, sans-serif;font-size: .875rem;background-color: #222;display: none;"><div id="myBar" style="width: 0%; height: 2vh; background-color: #2ab9a380;">0%</div><div id="progressText" style="padding-top: 1vh;padding-left: 10px;padding-right: 10px;padding-bottom: 1vh;"></div></div>';
-  document.getElementById('myButton').style.display = 'none';
-  document.getElementById('myProgress').style.display = 'block';
-  const bar = document.getElementById('myBar');
-  const barText = document.getElementById('progressText');
-  let progressPercent = 0;
+  DOM = getDOM();
+  DOM.progressBar.div.style.display = 'block';
+  DOM.rozlaczButton.style.display = 'none';
+
   // Get sorting option
   /*
-  m - trafność: największa
-  p - cena: od najniższej
-  pd - cena: od najwyższej
-  d - cena z dostawą: od najniższej
-  dd - cena z dostawą: od najwyższej
-  qd - popularność: największa
-  t - czas do końca: najmniej
-  n - czas dodania: najnowsze
+  m - trafność: największa, qd - popularność: największa
+  p - cena: od najniższej, pd - cena: od najwyższej
+  d - cena z dostawą: od najniższej, dd - cena z dostawą: od najwyższej
+  t - czas do końca: najmniej, n - czas dodania: najnowsze
   prd - ocena produktu: najwyższa
-   */
-  // TODO: Need to scroll through more pages in nested offers
-  const mainArticles = document.querySelector('.opbox-listing > div');
+  */
+
   const mainURL = new URL(window.location.href);
   const mainURLQuery = new URLSearchParams(window.location.search);
   mainURLQuery.delete('string');
   const queryParams = mainURLQuery.toString();
+  const pageCount = parseInt(DOM.pagination.innerText);
 
-  const mainOpbox = await getOpboxJSON(mainURL);
-  const searchMeta =
-    mainOpbox.dataSources['listing-web-bff:allegro.listing:3.0'].metadata;
-
-  const pageCount = Math.ceil(
-    searchMeta.Pageable.totalCount / searchMeta.Pageable.pageSize
-  );
-  //document.querySelector('.opbox-listing > div');
   console.log(
     `Sorting set to ${mainURLQuery.get('order')} - Page count ${pageCount}`
   );
 
-  let everyArticle = '';
-  let articleList = [];
-
-  const progressSplit = Math.floor(100 / pageCount);
+  // Get all listings
+  let promiseArray = [];
   for (let i = 1; i <= pageCount; i++) {
-    console.log(`Processing page ${i}`);
-    barText.innerText = `Processing page ${i}`;
-    let productsToExtract;
-
-    // process first page
-    if (i == 1) {
-      productsToExtract = mainOpbox.dataSources[
-        'listing-web-bff:allegro.listing:3.0'
-      ].data.elements.filter((el) => el.type != 'label' && el.type != 'banner');
-    } else {
-      break; // for now
-      const nextPageLink = new URL(mainURL.href);
-      nextPageLink.searchParams.set('p', i);
-      const nextOpbox = await getOpboxJSON(nextPageLink);
-
-      productsToExtract = nextOpbox.dataSources[
-        'listing-web-bff:allegro.listing:3.0'
-      ].data.elements.filter((el) => el.type != 'label' && el.type != 'banner');
-    }
-
+    DOM.progressBar.text.innerText = `Processing page ${i}`;
+    console.log(DOM.progressBar.text.innerText);
+    let nextLink = mainURL.href;
     if (i > 1) {
-      // try to avoid being bot :P
-      /*await new Promise((r) =>
-        setTimeout(r, Math.random() * (1000 - 200) + 200)
-      );*/
+      nextLink = new URL(mainURL.href);
+      nextLink.searchParams.set('p', i);
     }
 
-    // loop through each article
-    for (const [index, article] of productsToExtract.entries()) {
-      progressPercent =
-        progressSplit * (i - 1) +
-        Math.floor((progressSplit / productsToExtract.length) * index);
-      bar.style.width = progressPercent + '%';
-      bar.innerText = progressPercent + '%';
-      console.log(`Bar width: ${progressPercent}%`);
-
-      console.log(article);
-      const articleName = article.name;
-      const link = article.links?.[0]?.url;
-      if (!link) {
-        const isLocal = article.url.includes('https://allegrolokalnie.pl/');
-        if (isLocal) {
-          continue; // For now
-          everyArticle += genListing(article, local);
-          continue;
-        }
-        if (
-          articleList.findIndex(
-            (x) => new URL(x.url).pathname == new URL(article.url).pathname
-          ) !== -1
-        )
-          continue;
-        articleList.push(article);
-        //everyArticle += genListing(article);
-        continue;
-      }
-      if (link.includes('https://allegrolokalnie.pl/')) {
-        console.log('AllegroLokalnie - skip!');
-        continue; // for now
-        if (i !== 1) continue;
-        // TODO: FIX nested page
-        console.log(
-          `[PAGE ${i}] Restoring offers for ${articleName} - nested page 1`
-        );
-        barText.innerText = `[PAGE ${i}] Restoring offers for ${articleName} - nested page 1`;
-
-        let fetchLink = `${link}&${queryParams}`;
-        if (!link.includes('?')) {
-          fetchLink = `${link}?${queryParams}`;
-        }
-        console.log(`Lokalnie link: ${fetchLink}`);
-        // get the page and parse offers as dom
-        let offerData;
-        try {
-          offerData = await new Promise((resolve, reject) => {
-            GM.xmlHttpRequest({
-              method: 'GET',
-              url: fetchLink,
-              headers: {
-                Accept: 'text/html',
-                'User-Agent':
-                  'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36  (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
-              },
-              onload: function (response) {
-                if (response.status != 200) {
-                  // Create retry
-                  reject(
-                    `Failed to get offers for ${link} - STATUS: ${offerData.status}`
-                  );
-                }
-                resolve(response.responseText);
-              },
-              onerror: function (error) {
-                reject(error);
-              },
-            });
-          });
-        } catch (e) {
-          console.error(`Failed to get offers for ${fetchLink}`);
-          console.error(e.message);
-          continue;
-        }
-        const nestedPage = new DOMParser().parseFromString(
-          await offerData,
-          'text/html'
-        );
-        const nestedArticles = nestedPage.querySelectorAll(
-          '[data-testid="offers-list"] > article'
-        );
-        for (const nestedArticle of nestedArticles) {
-          const offerTitle = nestedArticle.querySelector('h3').innerText;
-          const offerImg = nestedArticle.querySelector('img').src;
-          const offerLink = nestedArticle.querySelector('a').href;
-          const offerPrice = nestedArticle
-            .querySelector('.mlc-itembox__price')
-            .innerText.replaceAll('\n', '')
-            .split(/\xA0/)[0]
-            .trim()
-            .replaceAll(' ', '');
-          let offerType = 'KUP TERAZ';
-          if (
-            nestedArticle.querySelector('.mlc-itembox__offer-type--bidding') !==
-            null
-          )
-            offerType = 'LICYTACJA';
-          if (
-            nestedArticle.querySelector(
-              '.mlc-itembox__offer-type--classified'
-            ) !== null
-          )
-            offerType = 'OGŁOSZENIE';
-
-          const offerCondition =
-            nestedArticle.querySelector(
-              '[data-tip="Ten przedmiot jest fabrycznie nowy, nigdy nie był używany."]'
-            ) == null
-              ? 'Używany'
-              : 'Nowy';
-
-          const offerSmart =
-            nestedArticle.querySelector('.mlc-itembox__smart-icon') == null
-              ? false
-              : true;
-
-          const localArticle = `<article class="mx7m_1 mnyp_co mlkp_ag"><div class="mqen_m6 mjyo_6x mgmw_3z mpof_ki mwdn_0 mp7g_oh mj7a_16 mg9e_16 mh36_8 m7er_k4 m0ux_vh mp5q_jr m31c_kb _1e32a_3Yx4X"><div class="mvrt_8 mse2_k4"><div><div class="mp7g_oh"><a href="${offerLink}" rel="nofollow" aria-hidden="true" tabindex="-1" class="msts_9u mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_ki m389_6m mx4z_6m m7f5_6m _1e32a_7ZEQF"><img alt="${offerTitle}" loading="lazy" src="${offerImg}"></a></div></div></div><div class="mpof_ki mr3m_1 myre_zn myre_8v_l _1e32a_pAK3c"><div class="mjyo_6x mpof_ki myre_zn mj7a_8 mj7a_0_l mvrt_8_l m7er_k4 _1e32a_PH-oM"><div class="_1e32a_ThNEQ mryx_16"><h2 class="mgn2_14 m9qz_yp mqu1_16 mp4t_0 m3h2_0 mryx_0 munh_0"><a href="${offerLink}" class="mgn2_14 mp0t_0a mgmw_wo mj9z_5r mli8_k4 mqen_m6 lsaqd lvg0h meqh_en mpof_z0 mqu1_16 m6ax_n4 _1e32a_f18Kx ">${offerTitle}</a></h2><picture><source media="(prefers-color-scheme: dark)" srcset="https://a.allegroimg.com/original/34cfc8/10ec4f874e53943e4874ec35cf46/dark-brand-subbrand-allegro-lokalnie-9ec666e2c7"><img src="https://a.allegroimg.com/original/34a54b/cf0e78534a3db96bc835307f3006/brand-subbrand-allegro-lokalnie-9d019981af" alt="Allegro Lokalnie"></picture></div></div><div class="m911_co mpof_ki myre_zn m7f5_5x mg9e_8 mg9e_0_l mh36_16_l mx7m_1 mlkp_ag m7er_k4 _1e32a_WSqB7"><div class="mpof_ki"><div class="_1e32a_ThNEQ mzaq_56"><div class="mj7a_4 mg9e_4 _1e32a_B-L3c"><div class="mpof_ki m389_0a mwdn_1"><div class="msa3_z4 m3h2_8"><span aria-label="${offerPrice}&nbsp;zł aktualna cena" tabindex="0"><span class="mli8_k4 msa3_z4 mqu1_1 mp0t_ji m9qz_yo mgmw_qw mgn2_27 mgn2_30_s">${offerPrice}&nbsp;<span class="mgn2_19 mgn2_21_s m9qz_yq">zł</span></span></span></div>${
-            offerSmart
-              ? '<span class="mpof_92 mp7g_oh"><div class="mp7g_oh "><div class="mgn2_12 mpof_ki m389_6m mwdn_1"><div class="mpof_ki m389_6m mwdn_1 _1e32a_x7RE- m3h2_0"><picture><source media="(prefers-color-scheme: dark)" srcset="https://a.allegroimg.com/original/34611c/c433ab0c4bf9a76e4f1f15b5dd1f/dark-brand-subbrand-smart-2ecf1fa38c.svg"><img src="https://a.allegroimg.com/original/343b4d/ed3f5c04412ab7bd70dd0a34f0cd/brand-subbrand-smart-d8bfa93f10.svg" alt="" class="mpof_z0 _1e32a_ELS6C"></picture></div></div></div></span>'
-              : ''
-          }</div></div></div></div><div class="_1e32a_ThNEQ mg9e_4"><div><div class="mgn2_12"><div><span class="mgmw_3z _1e32a_XFNn4">Stan</span> <span class="mgmw_wo mvrt_8 ">${offerCondition}</span> </div></div></div><div class="mpof_ki mwdn_1"><div class="mpof_uk"><span>${offerType} z Allegro Lokalnie</span></div></div></div></div></div></div></article>`;
-
-          everyArticle += localArticle;
-        }
-
-        /*await new Promise(r =>
-          setTimeout(r, Math.random() * (1000 - 200) + 200)
-        );*/
-        continue;
-      }
-
-      console.log(
-        `[PAGE ${i}] Restoring offers for ${articleName} - nested page 1`
-      );
-      barText.innerText = `[PAGE ${i}] Restoring offers for ${articleName} - nested page 1`;
-      let fetchLink = `${link}&${queryParams}`;
-      if (!link.includes('?')) {
-        fetchLink = `${link}?${queryParams}`;
-      }
-
-      // get the page and parse offers as dom
-      const nestedOpbox = await getOpboxJSON(fetchLink);
-      const nestedProducts = nestedOpbox.dataSources[
-        'listing-api-v3:allegro.listing:3.0'
-      ].data.elements.filter((el) => el.type != 'label' && el.type != 'banner');
-
-      for (const nestedArticle of nestedProducts) {
-        console.log(nestedArticle);
-        if (
-          articleList.findIndex(
-            (x) =>
-              new URL(x.url).pathname == new URL(nestedArticle.url).pathname
-          ) !== -1
-        )
-          continue;
-        articleList.push(nestedArticle);
-        //everyArticle += genListing(nestedArticle);
-      }
-
-      // Stealth
-      /*await new Promise((r) =>
-        setTimeout(r, Math.random() * (1000 - 200) + 200)
-      );*/
-    }
+      await processSearchResults(DOM, queryParams, nextLink, pageCount, i)
+    // Experimental - 429
+    /*promiseArray.push(
+      processSearchResults(DOM, queryParams, nextLink, pageCount, i)
+    );*/
   }
-  for (const article of articleList) {
+  //await Promise.all(promiseArray);
+  // De duplicate by URL
+  DOM.progressBar.text.innerText = `Removing duplicates...`;
+  console.log(
+    DOM.progressBar.text.innerText,
+    `from ${articleList.length} articles`
+  );
+  await new Promise((r) => setTimeout(r, 1));
+  //let uniqueProducts = [];
+  const uniqueProducts = articleList.filter(
+    (value, index, self) => index === self.findIndex((t) => t.url === value.url)
+  );
+
+  // Sorting
+  DOM.progressBar.text.innerText = `Sorting by ${
+    mainURL.searchParams.get('order')
+      ? mainURL.searchParams.get('order')
+      : 'lowest price'
+  }...`;
+  console.log(DOM.progressBar.text.innerText);
+  await new Promise((r) => setTimeout(r, 1));
+
+  // sort price asc for now
+  uniqueProducts.sort((a, b) => a.price - b.price);
+
+  let everyArticle = '';
+  for (const article of uniqueProducts) {
     everyArticle += genListing(article);
   }
-  console.log(everyArticle);
+  //console.log(everyArticle);
   // sort and push all articles to main page
-  const unsortedArticlesDOM = new DOMParser().parseFromString(
-    `<div>${everyArticle}</div>`,
-    'text/html'
-  );
-  const unsortedArticles = unsortedArticlesDOM.querySelector('div');
 
-  console.log(unsortedArticles.children.length);
-  if (unsortedArticles.children.length > 1) {
-    console.log(`Sorting by ${mainURL.searchParams.get('order')}`);
-    barText.innerText = `Sorting by ${mainURL.searchParams.get('order')}`;
-
-    [...unsortedArticles.children]
-      .sort((a, b) => {
-        const priceAraw = a.querySelectorAll('[aria-label$="aktualna cena"]');
-        if (priceAraw.length == 0) {
-          console.error(`Missing price for item ${a.outerHTML}, skipping`);
-          return 1;
-        }
-        const priceA = parseFloat(
-          priceAraw[priceAraw.length - 1]
-            .getAttribute('aria-label')
-            .split(/\xA0/)[0]
-            .replace(',', '.')
-        );
-
-        const priceBraw = b.querySelectorAll('[aria-label$="aktualna cena"]');
-        if (priceBraw.length == 0) {
-          console.error(`Missing price for item ${b.outerHTML}, skipping`);
-          return 1;
-        }
-        const priceB = parseFloat(
-          priceBraw[priceBraw.length - 1]
-            .getAttribute('aria-label')
-            .split(/\xA0/)[0]
-            .replace(',', '.')
-        );
-        switch (mainURL.searchParams.get('order')) {
-          case 'pd':
-            if (priceA < priceB) return 1;
-            else return -1;
-          default:
-            if (priceA > priceB) return 1;
-            else return -1;
-        }
-      })
-      .forEach((node) => unsortedArticles.appendChild(node));
-  } else console.log(`Not sorting`);
-  mainArticles.innerHTML = unsortedArticles.innerHTML;
+  DOM.mainArticles.innerHTML = everyArticle;
   document.querySelector('[data-role="paginationBottom"]').innerHTML =
     '<div class="m9vn_d2" data-role="paginationBottom"><div data-box-name="pagination bottom" data-box-id="xiI_xzzDRBaVlh7UFNK77w==" data-prototype-id="allegro.pagination" data-prototype-version="2.8" data-civ="222" data-analytics-enabled="" data-analytics-category="allegro.pagination"><div class="mpof_ki m7f5_6m m7f5_sf_s" data-param="p" data-one-based="true" data-listing-id="-11176257601724423245020" data-without-better-sort="true"><div class="mpof_ki munh_16 m3h2_16 mt1t_fz munh_56_s"><div class="mpof_ki m389_6m" role="navigation" aria-label="paginacja"><a href="https://allegro.pl/kategoria/akcesoria-gsm-etui-i-pokrowce-353?string=iphone%207&amp;order=p&amp;typ=plecki&amp;stan=nowe&amp;offerTypeAuction=2&amp;kolor=bezbarwny" data-page="1" class="l8c4v l195b mh36_8 mvrt_8 l1tbk _6d89c_N3YpX l97x9" aria-current="page">1</a><div class="munh_8 m3h2_8 msa3_z4 mgmw_wo _1h7wt">z</div><span class="_1h7wt mgmw_wo mh36_8 mvrt_8">1</span></div></div></div></div></div>';
-  console.log(`Finished! Total offers = ${unsortedArticles.children.length}`);
-  bar.style.width = '100%';
-  bar.innerText = '100%';
-  barText.innerText = `Finished! Total offers = ${unsortedArticles.children.length}`;
+
+  DOM.progressBar.bar.style.width = '100%';
+  DOM.progressBar.bar.innerText = '100%';
+  DOM.progressBar.text.innerText = `Finished! Total offers = ${uniqueProducts.length}`;
+  console.log(DOM.progressBar.text.innerText);
 };
 
 const zNode = document.createElement('div');
 zNode.className = 'mpof_5r mpof_vs_s mp4t_8 m3h2_16 mse2_40';
 zNode.innerHTML =
   '<button id="myButton" class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 msbw_rf mldj_rf mtag_rf mm2b_rf msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mx7m_1 m911_co mefy_co mnyp_co mdwl_co mlkp_6x mqvr_g3 _1405b_ZtYZA">Rozłącz te same oferty</button>';
+
 function runWhenReady(readySelector, callback) {
   var numAttempts = 0;
   var tryNow = function () {
@@ -363,43 +318,33 @@ function runWhenReady(readySelector, callback) {
 runWhenReady('[data-role="aboveItems"]', () => {
   document.querySelector('[data-role="aboveItems"]').appendChild(zNode);
   document.getElementById('myButton').addEventListener('click', restore, false);
-  Object.defineProperty(navigator, 'userAgent', {
-    value:
-      'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36  (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
-    configurable: false,
-  });
 });
 
-const genListing = (listingData, isLocal) => {
-  const offerLink = listingData.url;
-  const offerTitle = listingData.name;
-  const imgLink = listingData.mainThumbnail; //s120
-  const isCompany = listingData.seller.company;
-  const isSuperSeller = listingData.seller.superSeller;
-  const sellerName = listingData.seller.login;
-  const sellerRecommendPercent = listingData.seller.positiveFeedbackPercent;
-  const sellerReviewCount = listingData.seller.positiveFeedbackCount || 'brak';
-  const isSmart = listingData.freebox ? true : false;
-  const productState = listingData.parameters[0].values[0];
-  let whenDelivery = listingData.badges.logistics.additionalInfo.text;
-  if (whenDelivery.includes('jutro'))
-    whenDelivery = `${
-      whenDelivery.split('dostawa jutro')[0]
-    }<span class="mli2_0" style="color: rgb(27, 184, 40); font-weight: bold; text-decoration: none;">dostawa jutro</span>`;
-  const priceShipping = listingData.shipping.itemWithDelivery.amount;
-  const popularity = listingData.sellingMode.popularityLabel;
-  const isBidding = listingData.sellingMode.auction ? true : false;
-  let price = listingData.sellingMode.buyNow?.price?.amount || '0.0';
-  let isBiddingBuyNow = false;
-  let biddingBuyNowPrice = 0;
-  let biddingTimeLeft = 0;
-  if (isBidding) {
-    isBiddingBuyNow = listingData.sellingMode.buyNow ? true : false;
-    biddingBuyNowPrice = listingData.sellingMode.buyNow?.price?.amount || '0.0';
-    price = listingData.sellingMode.auction.price.amount;
-    biddingTimeLeft = daysTillEnd(listingData.publication.endingTime);
-  }
-  console.log({ isBidding, offerTitle, price, productState });
+const genListing = (listingData) => {
+  const {
+    url,
+    name,
+    mainImg,
+    seller,
+    isSmart,
+    productState,
+    whenDelivery,
+    priceShipping,
+    popularityLabel,
+    isBidding,
+    price,
+    isBiddingBuyNow,
+    biddingBuyNowPrice,
+    biddingTimeLeft,
+    endingTime,
+  } = listingData;
+  const {
+    isCompany,
+    isSuperSeller,
+    login,
+    positiveFeedbackPercent,
+    positiveFeedbackCount,
+  } = seller;
   return `<article class="mx7m_1 mnyp_co mlkp_ag _1e32a_kdIMd">
   <div
     class="mpof_ki mp7g_oh mh36_16 mh36_24_l mvrt_16 mvrt_24_l mg9e_8 mj7a_8 m7er_k4 mjyo_6x mgmw_3z m0ux_vh mp5q_jr m31c_kb _1e32a_-EkD5"
@@ -408,15 +353,15 @@ const genListing = (listingData, isLocal) => {
       <div class="mpof_ki myre_zn m389_6m mse2_56 _1e32a_Q0tfR">
         <div class="mpof_ki mp7g_oh">
           <a
-            href="${offerLink}"
+            href="${url}"
             rel="nofollow"
             aria-hidden="true"
             tabindex="-1"
             class="msts_9u mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_ki m389_6m mx4z_6m m7f5_6m _1e32a_7ZEQF"
             ><img
-              alt="${offerTitle}"
+              alt="${name}"
               loading="lazy"
-              src="${imgLink}"
+              src="${mainImg}"
           /></a>
         </div>
       </div>
@@ -438,9 +383,9 @@ const genListing = (listingData, isLocal) => {
         }
           <h2 class="mgn2_14 m9qz_yp mqu1_16 mp4t_0 m3h2_0 mryx_0 munh_0">
             <a
-              href="${offerLink}"
+              href="${url}"
               class="mgn2_14 mp0t_0a mgmw_wo mj9z_5r mli8_k4 mqen_m6 lsaqd lvg0h meqh_en mpof_z0 mqu1_16 m6ax_n4 _1e32a_f18Kx"
-              >${offerTitle}</a
+              >${name}</a
             >
           </h2>
           <div class="mpof_ki mwdn_1 m389_6m m389_a6_m">
@@ -451,15 +396,15 @@ const genListing = (listingData, isLocal) => {
             }
             <div class="m3h2_8">
               <div class="mgn2_12">
-                <span class="mgmw_wo">${sellerName}</span>
+                <span class="mgmw_wo">${login}</span>
               </div>
             </div>
             <div class="m3h2_8">
               <div class="mgn2_12">
-                Poleca sprzedającego: <span class="mgmw_wo">${sellerRecommendPercent}%</span>
+                Poleca sprzedającego: <span class="mgmw_wo">${positiveFeedbackPercent}%</span>
               </div>
             </div>
-            <div class="mgn2_12">${sellerReviewCount} ocen</div>
+            <div class="mgn2_12">${positiveFeedbackCount} ocen</div>
           </div>
           <div>
             <div class="mgn2_12">
@@ -518,7 +463,7 @@ const genListing = (listingData, isLocal) => {
         <div class="mg9e_4 mj7a_8 mpof_ki myre_zn m389_a6 m7f5_0a _1e32a_DNkZz">
           <div class="mpof_vs mgn2_12 mqu1_g3 mgmw_3z mg9e_2">
             <div class="mp7g_oh">
-              <span>${popularity ? popularity : ''}</span>
+              <span>${popularityLabel ? popularityLabel : ''}</span>
               <div class="mpof_5r mpof_3f_l mpof_3f">
                 <div
                   class="mjyo_6x mp7g_f6 mjb5_w6 msbw_2 mldj_2 mtag_2 mm2b_2 mgmw_wo msts_n6 m7er_k4 ti1554 ti1nw9 mpof_5r undefined"
