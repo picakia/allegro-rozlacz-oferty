@@ -79,7 +79,7 @@ const generateProduct = (listingData) => {
       whenDelivery:
         listingData.badges?.logistics?.additionalInfo?.text ||
         listingData.shipping.summary?.labels[0]?.text,
-      priceShipping: listingData.shipping.itemWithDelivery.amount,
+      priceShipping: listingData.shipping.itemWithDelivery?.amount || listingData.sellingMode.buyNow?.price?.amount,
       popularityLabel: listingData.sellingMode.popularityLabel,
       isBidding: listingData.sellingMode.auction ? true : false,
       price: listingData.sellingMode.buyNow?.price?.amount || '0.0',
@@ -328,6 +328,7 @@ runWhenReady('[data-role="aboveItems"]', () => {
 });
 
 const genListing = (listingData) => {
+  if(!listingData) return;
   const {
     url,
     name,
