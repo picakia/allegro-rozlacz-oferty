@@ -193,7 +193,7 @@ const processSearchResults = async (
     }
 
     // Get products using recursive fn
-      await processProductPage(DOM, fetchLink, currentPage, article.name)
+    await processProductPage(DOM, fetchLink, currentPage, article.name);
 
     // Experimental - 429
     /*promiseArrayPrd.push(
@@ -242,7 +242,7 @@ const restore = async () => {
       nextLink.searchParams.set('p', i);
     }
 
-      await processSearchResults(DOM, queryParams, nextLink, pageCount, i)
+    await processSearchResults(DOM, queryParams, nextLink, pageCount, i);
     // Experimental - 429
     /*promiseArray.push(
       processSearchResults(DOM, queryParams, nextLink, pageCount, i)
@@ -271,7 +271,14 @@ const restore = async () => {
   await new Promise((r) => setTimeout(r, 1));
 
   // sort price asc for now
-  uniqueProducts.sort((a, b) => a.price - b.price);
+  switch (mainURL.searchParams.get('order')) {
+    case 'pd':
+      uniqueProducts.sort((a, b) => b.price - a.price);
+      break;
+    default:
+      uniqueProducts.sort((a, b) => a.price - b.price);
+      break;
+  }
 
   let everyArticle = '';
   for (const article of uniqueProducts) {
