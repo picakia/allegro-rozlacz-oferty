@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2024-10-07
+// @version      2024-10-11T16-17
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -79,7 +79,9 @@ const generateProduct = (listingData) => {
       whenDelivery:
         listingData.badges?.logistics?.additionalInfo?.text ||
         listingData.shipping.summary?.labels[0]?.text,
-      priceShipping: listingData.shipping.itemWithDelivery?.amount || listingData.sellingMode.buyNow?.price?.amount,
+      priceShipping:
+        listingData.shipping.itemWithDelivery?.amount ||
+        listingData.sellingMode.buyNow?.price?.amount,
       popularityLabel: listingData.sellingMode.popularityLabel,
       isBidding: listingData.sellingMode.auction ? true : false,
       price: listingData.sellingMode.buyNow?.price?.amount || '0.0',
@@ -120,6 +122,10 @@ const processProductPage = async (
   productName
 ) => {
   let opbox = await getOpboxJSON(productLink);
+  if (!opbox.dataSources?.['listing-api-v3:allegro.listing:3.0']) {
+    console.error(`No listings from Opbox api for ${productLink}`);
+    return;
+  }
   const pagination =
     opbox.dataSources['listing-api-v3:allegro.listing:3.0'].metadata.Pageable;
   const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize);
@@ -151,6 +157,10 @@ const processSearchResults = async (
 ) => {
   const progressSplit = Math.floor(100 / pageCount);
   const opbox = await getOpboxJSON(nextLink);
+  if (!opbox.dataSources?.['listing-web-bff:allegro.listing:3.0']) {
+    console.error(`No search results from Opbox api for ${nextLink}`);
+    return;
+  }
   const productsToProcess = opbox.dataSources[
     'listing-web-bff:allegro.listing:3.0'
   ].data.elements.filter((el) => el.type != 'label' && el.type != 'banner');
@@ -328,7 +338,7 @@ runWhenReady('[data-role="aboveItems"]', () => {
 });
 
 const genListing = (listingData) => {
-  if(!listingData) return;
+  if (!listingData) return;
   const {
     url,
     name,
