@@ -11,6 +11,7 @@ Aktualnie dostępny jest userscript `AllegroRozlaczV2.js` do załadowania w mena
 3. Klikamy "Stwórz nowy skrypt" w menu rozszerzenia
 4. Wklejamy kod z `AllegroRozlaczV2.js` i zapisujemy (Ctrl+S)
 5. Wchodzimy na allegro i na stronie wyszukiwania powinien pojawić się guzik rozłaczania ofert.
+6. (opcjonalnie) W opcjach skrytpu można ustawić adres do aktualizacji: `https://raw.githubusercontent.com/picakia/allegro-rozlacz-oferty/refs/heads/master/AllegroRozlaczV2.js` - to ułatwi wczytywanie nowych wersji
 
 Docelowo skrypt będzie opublikowany na GreasyFork, na razie jest to bardzo wczesna wersja i przed publikacją chcę mieć stabliną wersję.
 
