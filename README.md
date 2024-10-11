@@ -52,6 +52,7 @@ Dodatkowo działa też sortowanie po najwyższej cenie, w tym celu **przed klikn
 - Działające powiększanie i przeglądanie zdjęć aukcji po najechaniu myszką
 - Działające filtry (tylko zawężanie, w drugą stronę nie jest wykonalne)
 - Dodanie IFrame lub okna gdzie w razie zablokowania będzie można rozwiązać captcha/puzelek po czym kontynuowanie pobieranie ofert
+- Przyśpieszenie skryptu poprzez jednoczesne zapytania, jednak nie przekraczające limitów API
 - Jasny motyw
 - Finalna wersja rozszerzenia i wrzucenie do web storów - wymaga dużej ilości pracy 
 
