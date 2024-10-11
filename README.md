@@ -58,5 +58,5 @@ Dodatkowo działa też sortowanie po najwyższej cenie, w tym celu **przed klikn
 ## Wkład w rozwój projektu
 
 * Znalazłeś/aś błąd? [Zgłoś issue](https://github.com/picakia/allegro-rozlacz-oferty/issues/new/choose)
-* Masz pomysł na nową funkcję/poprawkę ale nie czujesz się dobrze w kodowaniu? [Zaproponuj zmianę](https://github.com/picakia/allegro-rozlacz-oferty/issues)
+* Masz pomysł na nową funkcję/poprawkę ale nie czujesz się dobrze w kodowaniu? [Przedyskutujmy na forum](https://github.com/picakia/allegro-rozlacz-oferty/discussions)
 * Masz pomysł na poprawkę w kodzie? [Zaproponuj Pull-Request](https://github.com/picakia/allegro-rozlacz-oferty/pulls)
