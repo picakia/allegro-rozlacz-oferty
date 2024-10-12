@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2024-10-11_17-13
+// @version      2024-10-12_18-34
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -75,7 +75,7 @@ const generateProduct = (listingData) => {
           listingData.seller.positiveFeedbackCount || 'brak',
       },
       isSmart: listingData.freebox ? true : false,
-      productState: listingData.parameters[0].values[0],
+      productState: listingData.parameters[0]?.values?.[0] || "Nowy",
       whenDelivery:
         listingData.badges?.logistics?.additionalInfo?.text ||
         listingData.shipping.summary?.labels[0]?.text,
