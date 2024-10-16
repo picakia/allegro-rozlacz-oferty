@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2024-10-12_18-34
+// @version      2024-10-16_16-55
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -75,7 +75,7 @@ const generateProduct = (listingData) => {
           listingData.seller.positiveFeedbackCount || 'brak',
       },
       isSmart: listingData.freebox ? true : false,
-      productState: listingData.parameters[0]?.values?.[0] || "Nowy",
+      productState: listingData.parameters[0]?.values?.[0] || 'Nowy',
       whenDelivery:
         listingData.badges?.logistics?.additionalInfo?.text ||
         listingData.shipping.summary?.labels[0]?.text,
@@ -133,13 +133,17 @@ const processProductPage = async (
     DOM.progressBar.text.innerText = `[PAGE ${currentPage}] Restoring offers for ${productName} - nested level ${i}`;
     console.log(DOM.progressBar.text.innerText);
     if (i > 1) {
-      const nextLink = new URL(productLink);
+      const nextLink = new URL(decodeURIComponent(productLink));
+      //console.log(nextLink)
       nextLink.searchParams.set('p', i);
       opbox = await getOpboxJSON(nextLink);
     }
     const nestedProducts = opbox.dataSources[
       'listing-api-v3:allegro.listing:3.0'
-    ].data.elements.filter((el) => el.type != 'label' && el.type != 'banner');
+    ].data.elements.filter(
+      (el) =>
+        el.type != 'label' && el.type != 'banner' && el.type != 'slotInterline'
+    );
 
     for (const nestedArticle of nestedProducts) {
       const parsedProduct = generateProduct(nestedArticle);
@@ -155,7 +159,7 @@ const processSearchResults = async (
   pageCount,
   currentPage
 ) => {
-  const progressSplit = Math.floor(100 / pageCount);
+  const progressSplit = Math.round((100 / pageCount) * 10) / 10;
   const opbox = await getOpboxJSON(nextLink);
   if (!opbox.dataSources?.['listing-web-bff:allegro.listing:3.0']) {
     console.error(`No search results from Opbox api for ${nextLink}`);
@@ -163,7 +167,10 @@ const processSearchResults = async (
   }
   const productsToProcess = opbox.dataSources[
     'listing-web-bff:allegro.listing:3.0'
-  ].data.elements.filter((el) => el.type != 'label' && el.type != 'banner');
+  ].data.elements.filter(
+    (el) =>
+      el.type != 'label' && el.type != 'banner' && el.type != 'slotInterline'
+  );
 
   const productsCount = productsToProcess.length;
 
@@ -172,17 +179,23 @@ const processSearchResults = async (
   for (const [index, article] of productsToProcess.entries()) {
     // Loading Bar management
     const progressPercent =
-      progressSplit * (currentPage - 1) +
-      Math.floor((progressSplit / productsToProcess.length) * index);
+      Math.round(
+        (progressSplit * (currentPage - 1) +
+          (progressSplit / productsToProcess.length) * index) *
+          10
+      ) / 10;
     DOM.progressBar.bar.style.width = progressPercent + '%';
     DOM.progressBar.bar.innerText = progressPercent + '%';
     console.log(`Bar width: ${progressPercent}%`);
     DOM.progressBar.text.innerText = `[PAGE ${currentPage}] Restoring offers for ${article.name} - nested level 0`;
     console.log(DOM.progressBar.text.innerText);
 
+    if (!articleLink.url) continue;
+
     const articleLink = article.links?.[0]?.url;
     if (!articleLink) {
       // Article does not have "Porównaj x ofert" button
+      //console.log(article);
       const isLocal = article.url.includes('https://allegrolokalnie.pl/');
       if (isLocal) {
         continue;
@@ -206,9 +219,26 @@ const processSearchResults = async (
     await processProductPage(DOM, fetchLink, currentPage, article.name);
 
     // Experimental - 429
-    /*promiseArrayPrd.push(
+    /*let timeout = {
+            max: 500,
+            min: 250
+        };
+
+        if(currentPage % 2 == 0) {
+            timeout.max = 500;
+            timeout.min = 350;
+        } else {
+            timeout.max = 200;
+            timeout.min = 100;
+        }
+        await new Promise(r => setTimeout(r, Math.random() * (timeout.max - timeout.min) + timeout.min));
+    promiseArrayPrd.push(
       processProductPage(DOM, fetchLink, currentPage, article.name)
-    );*/
+    );
+    if (promiseArrayPrd.length == 20) {
+      await Promise.all(promiseArrayPrd);
+      promiseArrayPrd = [];
+    }*/
   }
   //await Promise.all(promiseArrayPrd);
 };
@@ -248,8 +278,10 @@ const restore = async () => {
     console.log(DOM.progressBar.text.innerText);
     let nextLink = mainURL.href;
     if (i > 1) {
-      nextLink = new URL(mainURL.href);
-      nextLink.searchParams.set('p', i);
+      nextLink = `${mainURL.href}&p=${i}`;
+      if (!nextLink.includes('?')) {
+        nextLink = `${mainURL.href}?p=${i}`;
+      }
     }
 
     await processSearchResults(DOM, queryParams, nextLink, pageCount, i);
