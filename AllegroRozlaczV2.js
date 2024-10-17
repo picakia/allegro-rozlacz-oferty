@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2024-10-16_16-55
+// @version      2024-10-17_23-05
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -9,6 +9,11 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=allegro.pl
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
+
+// enable to speed up the script at a cost of being blocked
+const fastMode = false;
+// enable to show only offers that have your keywords in the title
+const cleanOffers = false;
 
 let progressPercent = 0;
 let articleList = [];
@@ -134,7 +139,7 @@ const processProductPage = async (
     console.log(DOM.progressBar.text.innerText);
     if (i > 1) {
       const nextLink = new URL(decodeURIComponent(productLink));
-      //console.log(nextLink)
+      //console.log(nextLink);
       nextLink.searchParams.set('p', i);
       opbox = await getOpboxJSON(nextLink);
     }
@@ -190,8 +195,6 @@ const processSearchResults = async (
     DOM.progressBar.text.innerText = `[PAGE ${currentPage}] Restoring offers for ${article.name} - nested level 0`;
     console.log(DOM.progressBar.text.innerText);
 
-    if (!articleLink.url) continue;
-
     const articleLink = article.links?.[0]?.url;
     if (!articleLink) {
       // Article does not have "Porównaj x ofert" button
@@ -215,11 +218,9 @@ const processSearchResults = async (
       fetchLink = `${articleLink}?${queryParams}`;
     }
 
-    // Get products using recursive fn
-    await processProductPage(DOM, fetchLink, currentPage, article.name);
-
-    // Experimental - 429
-    /*let timeout = {
+    if (fastMode) {
+      // Experimental - 429/403
+      /*let timeout = {
             max: 500,
             min: 250
         };
@@ -231,16 +232,22 @@ const processSearchResults = async (
             timeout.max = 200;
             timeout.min = 100;
         }
-        await new Promise(r => setTimeout(r, Math.random() * (timeout.max - timeout.min) + timeout.min));
-    promiseArrayPrd.push(
-      processProductPage(DOM, fetchLink, currentPage, article.name)
-    );
-    if (promiseArrayPrd.length == 20) {
-      await Promise.all(promiseArrayPrd);
-      promiseArrayPrd = [];
-    }*/
+        await new Promise(r => setTimeout(r, Math.random() * (timeout.max - timeout.min) + timeout.min));*/
+      promiseArrayPrd.push(
+        processProductPage(DOM, fetchLink, currentPage, article.name)
+      );
+      if (promiseArrayPrd.length == 20) {
+        await Promise.all(promiseArrayPrd);
+        promiseArrayPrd = [];
+      }
+    } else {
+      // Get products using recursive fn
+      await processProductPage(DOM, fetchLink, currentPage, article.name);
+    }
   }
-  //await Promise.all(promiseArrayPrd);
+  if (fastMode) {
+    await Promise.all(promiseArrayPrd);
+  }
 };
 
 const restore = async () => {
@@ -284,13 +291,53 @@ const restore = async () => {
       }
     }
 
-    await processSearchResults(DOM, queryParams, nextLink, pageCount, i);
-    // Experimental - 429
-    /*promiseArray.push(
+    if (fastMode) {
+      // Experimental - 429/403
+      /*promiseArray.push(
       processSearchResults(DOM, queryParams, nextLink, pageCount, i)
     );*/
+      // the same strategy as slow for now
+      await processSearchResults(DOM, queryParams, nextLink, pageCount, i);
+    } else {
+      await processSearchResults(DOM, queryParams, nextLink, pageCount, i);
+    }
   }
-  //await Promise.all(promiseArray);
+  if (fastMode) {
+    // not working for now
+    //await Promise.all(promiseArray);
+  }
+
+  let toDeduplicate = [];
+
+  // Clean results
+
+  if (cleanOffers) {
+    DOM.progressBar.text.innerText = `Cleaning up irrevelant offers...`;
+    console.log(
+      DOM.progressBar.text.innerText,
+      `from ${articleList.length} articles`
+    );
+    await new Promise((r) => setTimeout(r, 1));
+    const keywords = mainURL.searchParams
+      .get('string')
+      .split(' ')
+      .map((e) => e.toLowerCase());
+    toDeduplicate = articleList.filter((item) => {
+      const itemNameLower = item.name.toLowerCase();
+      for (const keyword of keywords) {
+        if (!itemNameLower.includes(keyword)) {
+          console.log(
+            `Item: "${item.name}" does not include word ${keyword}, removing...`
+          );
+          return false;
+        }
+      }
+      return true;
+    });
+  } else {
+    toDeduplicate = articleList;
+  }
+  console.log(toDeduplicate.length);
   // De duplicate by URL
   DOM.progressBar.text.innerText = `Removing duplicates...`;
   console.log(
@@ -299,7 +346,7 @@ const restore = async () => {
   );
   await new Promise((r) => setTimeout(r, 1));
   //let uniqueProducts = [];
-  const uniqueProducts = articleList.filter(
+  const uniqueProducts = toDeduplicate.filter(
     (value, index, self) => index === self.findIndex((t) => t.url === value.url)
   );
 
