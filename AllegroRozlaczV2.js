@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2024-10-17_23-05
+// @version      2025-02-15_23-05
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -176,6 +176,7 @@ const processSearchResults = async (
     (el) =>
       el.type != 'label' && el.type != 'banner' && el.type != 'slotInterline'
   );
+  //console.log(productsToProcess);
 
   const productsCount = productsToProcess.length;
 
@@ -195,7 +196,7 @@ const processSearchResults = async (
     DOM.progressBar.text.innerText = `[PAGE ${currentPage}] Restoring offers for ${article.name} - nested level 0`;
     console.log(DOM.progressBar.text.innerText);
 
-    const articleLink = article.links?.[0]?.url;
+    const articleLink = article.productizationLinks?.productPage?.url;
     if (!articleLink) {
       // Article does not have "Porównaj x ofert" button
       //console.log(article);
