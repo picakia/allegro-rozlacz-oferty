@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2025-02-15_23-05
+// @version      2025-10-26_14-30
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -28,6 +28,7 @@ const getDOM = () => {
     rozlaczButton: document.getElementById('myButton'),
     mainArticles: document.querySelector('.opbox-listing > div'),
     pagination: document.querySelector('[aria-label="paginacja"] > span'),
+    aiShit: document.querySelector('[data-box-name="layout.container.dynamicQueryNarrowing"]')
   };
 };
 
@@ -147,7 +148,7 @@ const processProductPage = async (
       'listing-api-v3:allegro.listing:3.0'
     ].data.elements.filter(
       (el) =>
-        el.type != 'label' && el.type != 'banner' && el.type != 'slotInterline'
+        el.type != 'label' && el.type != 'banner' && el.type != 'slotInterline' && el.type != 'carousel'
     );
 
     for (const nestedArticle of nestedProducts) {
@@ -174,7 +175,7 @@ const processSearchResults = async (
     'listing-web-bff:allegro.listing:3.0'
   ].data.elements.filter(
     (el) =>
-      el.type != 'label' && el.type != 'banner' && el.type != 'slotInterline'
+      el.type != 'label' && el.type != 'banner' && el.type != 'slotInterline' && el.type != 'carousel'
   );
   //console.log(productsToProcess);
 
@@ -203,7 +204,7 @@ const processSearchResults = async (
       const isLocal = article.url.includes('https://allegrolokalnie.pl/');
       if (isLocal) {
         continue;
-        console.log(`LOCAL OFFER: article.url`);
+        //console.log(`LOCAL OFFER: article.url`);
       }
 
       const parsedProduct = generateProduct(article);
@@ -253,6 +254,7 @@ const processSearchResults = async (
 
 const restore = async () => {
   let DOM = getDOM();
+  DOM.aiShit.style.display = 'none';
   // ProgressBar95
   DOM.progressBar.box.innerHTML =
     '<div id="myProgress" style="padding: 1vh;height: 100%;font-weight: 600;text-align: center;color: #ffffffde;font-family: Open Sans, sans-serif;font-size: .875rem;background-color: #222;display: none;"><div id="myBar" style="width: 0%; height: 2vh; background-color: #2ab9a380;">0%</div><div id="progressText" style="padding-top: 1vh;padding-left: 10px;padding-right: 10px;padding-bottom: 1vh;"></div></div>';
@@ -443,32 +445,34 @@ const genListing = (listingData) => {
     positiveFeedbackPercent,
     positiveFeedbackCount,
   } = seller;
-  return `<article class="mx7m_1 mnyp_co mlkp_ag _1e32a_kdIMd">
+  return `<article class="mjyo_6x mse2_k4 mx7m_1 mnyp_co mlkp_ag _1e32a_kdIMd">
   <div
     class="mpof_ki mp7g_oh mh36_16 mh36_24_l mvrt_16 mvrt_24_l mg9e_8 mj7a_8 m7er_k4 mjyo_6x mgmw_3z m0ux_vh mp5q_jr m31c_kb _1e32a_-EkD5"
   >
     <div>
       <div class="mpof_ki myre_zn m389_6m mse2_56 _1e32a_Q0tfR">
         <div class="mpof_ki mp7g_oh">
-          <a
-            href="${url}"
-            rel="nofollow"
-            aria-hidden="true"
-            tabindex="-1"
-            class="msts_9u mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_ki m389_6m mx4z_6m m7f5_6m _1e32a_7ZEQF"
-            ><img
-              alt="${name}"
-              loading="lazy"
-              src="${mainImg}"
-          /></a>
+          <div aria-hidden="true">
+            <a
+              href="${url}"
+              rel="nofollow"
+              aria-hidden="true"
+              tabindex="-1"
+              class="msts_9u mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_ki m389_6m mx4z_6m m7f5_6m _1e32a_TL5tb _1e32a_pBYpQ"
+              ><img
+                alt="${name}"
+                loading="lazy"
+                src="${mainImg}"
+            /></a>
+          </div>
         </div>
       </div>
     </div>
     <div class="mh36_8 mjyo_6x _1e32a_2Cd7P">
-      <div class="_1e32a_yFdue">
+      <div class="_1e32a_qDdj-">
         ${
           isCompany
-            ? '<div class="mzmg_f9 _1e32a_v6GqI"><div><div class="mzmg_f9"><span class="mgmw_3z mpof_z0 mgn2_12">Firma</span></div></div></div>'
+            ? '<div class="mzmg_f9 _1e32a_v6GqI"><div><div class="mzmg_f9"><p class="mgmw_3z mpof_z0 mgn2_12 mp4t_0 mryx_0">Firma</p></div></div></div>'
             : ''
         }
         <div class="_1e32a_meWPT _1e32a_WrGF-">
@@ -493,41 +497,39 @@ const genListing = (listingData) => {
                 : '<div class="m3h2_4 mgn2_12">od</div>'
             }
             <div class="m3h2_8">
-              <div class="mgn2_12">
+              <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">
                 <span class="mgmw_wo">${login}</span>
-              </div>
+              </p>
             </div>
             <div class="m3h2_8">
-              <div class="mgn2_12">
+              <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">
                 Poleca sprzedającego: <span class="mgmw_wo">${positiveFeedbackPercent}%</span>
-              </div>
+              </p>
             </div>
-            <div class="mgn2_12">${positiveFeedbackCount} ocen</div>
+            <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">${positiveFeedbackCount} ocen</p>
           </div>
           <div>
-            <div class="mgn2_12">
-              <div>
-                <span class="mgmw_3z _1e32a_XFNn4">Stan</span>
-                <span class="mgmw_wo mvrt_8">${productState}</span>
-              </div>
-            </div>
+            <dl class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0 mjru_k4 meqh_en msa3_ae m6ax_n4 mqu1_g3 _1e32a_BBBTh _1e32a_LsWHh">
+              <dt class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_3z _1e32a_bkpJC">
+                Stan
+              </dt>
+              <dd class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_wo mvrt_8">
+                ${productState}
+              </dd>
+            </dl>
           </div>
           <div class="mj7a_4 mg9e_4 _1e32a_IAwmj">
-            <div class="mpof_ki m389_0a mwdn_1">
+            <div class="mpof_ki m389_0a mwdn_1 _1e32a_ZDCQ-">
               <div class="msa3_z4 m3h2_8">
-                <span aria-label="${price}&nbsp;zł aktualna cena" tabindex="0"
-                  ><span
+                <p aria-label="${price}&nbsp;zł aktualna cena" tabindex="0" class="mp4t_0 m3h2_0 mryx_0 munh_0 mpof_uk">
+                  <span
                     class="mli8_k4 msa3_z4 mqu1_1 mp0t_ji m9qz_yo mgmw_qw mgn2_27 mgn2_30_s"
-                    >${
-                      price.split('.')[0]
-                    },<span class="mgn2_19 mgn2_21_s m9qz_yq">${
-                      price.split('.')[1]
-                    }</span
+                    >${price.split('.')[0]},<span class="mgn2_19 mgn2_21_s m9qz_yq">${price.split('.')[1]}</span
                     >&nbsp;<span class="mgn2_19 mgn2_21_s m9qz_yq"
                       >zł</span
                     ></span
-                  ></span
-                >
+                  >
+                </p>
               </div>
   ${
     isSmart
@@ -543,7 +545,9 @@ const genListing = (listingData) => {
                 '&nbsp;zł</span><span class="m9qz_yp">kup teraz</span></span>'
               : ''
           }
-          <div class="mqu1_g3 mgn2_12">${priceShipping}&nbsp;zł z dostawą</div>
+          <p class="mqu1_g3 mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">
+            ${priceShipping}&nbsp;zł z dostawą
+          </p>
           <div class="mgn2_12 mpof_ki m389_6m mwdn_1">
             <div class="mpof_ki m389_6m mwdn_1 _1e32a_x7RE- m3h2_0">
               <span
@@ -558,7 +562,7 @@ const genListing = (listingData) => {
             </div>
           </div>
         </div>
-        <div class="mg9e_4 mj7a_8 mpof_ki myre_zn m389_a6 m7f5_0a _1e32a_DNkZz">
+        <div class="mg9e_4 mj7a_8 mpof_ki myre_zn myre_8v_l m389_a6 m389_6m_l m7f5_0a mp4t_0 mp4t_16_l _1e32a_orZUV">
           <div class="mpof_vs mgn2_12 mqu1_g3 mgmw_3z mg9e_2">
             <div class="mp7g_oh">
               <span>${popularityLabel ? popularityLabel : ''}</span>
@@ -569,14 +573,16 @@ const genListing = (listingData) => {
               </div>
             </div>
           </div>
-          <div class="mpof_ki mp4t_16">
+          <div class="mpof_ki m389_6m mp4t_16 mp4t_0_l">
             <button
               data-role-type="add-to-cart-button"
-              class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 mryx_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp bmh99 b3dfm munh_0 munh_16_l m3h2_0 m3h2_8_m"
+              class="mgn2_16 mp0t_0a m9qz_yq mp7g_oh mtsp_ib mli8_k4 mp4t_0 mryx_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_8 mj7a_8 mjir_sv m2ha_2 m8qd_vz mjt1_n2 m09p_40 b89vd mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp btnch b8x7t munh_0 munh_16_l m3h2_0 m3h2_8_m"
             >
               <span>dodaj do koszyka</span></button
             ><button
-              class="m7er_40 mp0t_0a m9qz_yp mp7g_oh mse2_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mqu1_1 mgn2_13 mvrt_0 mh36_0"
+              title="Dodaj do ulubionych"
+              aria-label="Dodaj do ulubionych XBOX 360 UFC 2009 (Sama Gra) / AKCJA / SPORTOWA / MMA"
+              class="m7er_40 mp0t_0a m9qz_yq mp7g_oh mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 mqen_m6 meqh_en m0qj_5r msts_n7 mjir_sv m2ha_2 m8qd_vz mjt1_n2 m09p_40 b89vd mqu1_1 mgn2_13 mg9e_0 mvrt_0 mj7a_0 mh36_0 mse2_40 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b2mt3"
             >
               <picture
                 ><source
@@ -586,8 +592,9 @@ const genListing = (listingData) => {
                   " />
                 <img
                   src="https://a.allegroimg.com/original/342704/5df50ccf415c9dc190264897d100/action-common-heart-322d64f02b"
-                  alt="Dodaj do ulubionych"
-                  class="mse2_40 mjyo_6x meqh_en msa3_z4 mg9e_4 mvrt_4 mj7a_4 mh36_4 mhd5_0m i1vy1 m0s5_ki"
+                  alt=""
+                  aria-hidden="true"
+                  class="mjyo_6x meqh_en msa3_z4 mhd5_0m i29rk mse2_40 mg9e_4 mvrt_4 mj7a_4 mh36_4 m0s5_ki"
               /></picture>
             </button>
           </div>
