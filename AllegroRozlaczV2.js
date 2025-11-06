@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2025-10-26_14-30
+// @version      2025-11-06_12-35
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -28,7 +28,7 @@ const getDOM = () => {
     rozlaczButton: document.getElementById('myButton'),
     mainArticles: document.querySelector('.opbox-listing > div'),
     pagination: document.querySelector('[aria-label="paginacja"] > span'),
-    aiShit: document.querySelector('[data-box-name="layout.container.dynamicQueryNarrowing"]')
+    aiShit: document.querySelector('[data-box-name="allegro.dynamicQueryNarrowing"]')
   };
 };
 
@@ -254,7 +254,7 @@ const processSearchResults = async (
 
 const restore = async () => {
   let DOM = getDOM();
-  DOM.aiShit.style.display = 'none';
+  if(DOM.aiShit) DOM.aiShit.style.display = 'none';
   // ProgressBar95
   DOM.progressBar.box.innerHTML =
     '<div id="myProgress" style="padding: 1vh;height: 100%;font-weight: 600;text-align: center;color: #ffffffde;font-family: Open Sans, sans-serif;font-size: .875rem;background-color: #222;display: none;"><div id="myBar" style="width: 0%; height: 2vh; background-color: #2ab9a380;">0%</div><div id="progressText" style="padding-top: 1vh;padding-left: 10px;padding-right: 10px;padding-bottom: 1vh;"></div></div>';
