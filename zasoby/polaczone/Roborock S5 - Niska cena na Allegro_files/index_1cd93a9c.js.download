@@ -1,0 +1,2 @@
+!function(){"use strict";var e,o={};e=o,"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0});var t=window;for(var r in o)t[r]=o[r];o.__esModule&&Object.defineProperty(t,"__esModule",{value:!0})}();
+//# sourceMappingURL=index_1cd93a9c.js.map

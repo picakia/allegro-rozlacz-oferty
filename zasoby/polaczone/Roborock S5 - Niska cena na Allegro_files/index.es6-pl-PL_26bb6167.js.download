@@ -1,0 +1,2 @@
+new class{constructor({window:e}){this.window=void 0,this.window=e}hydrate(){const e=this.window.document.getElementById("rate-a11y"),i=null==e?void 0:e.dataset.surveyId;e&&i&&e.addEventListener("click",(()=>this.onClickSurvey(i)))}onClickSurvey(e){this.window.opbox.plugin.get("survey").then((i=>{i.showSurvey(e),this.window.opbox.preferences.set("hideA11ySurvey",!0)}))}}({window}).hydrate();
+//# sourceMappingURL=index.es6-pl-PL_26bb6167.js.map

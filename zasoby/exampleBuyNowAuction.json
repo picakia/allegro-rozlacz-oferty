@@ -1,0 +1,412 @@
+{
+  "type": "buyNow_auction",
+  "badges": {
+    "installments": {
+      "labels": [
+        {
+          "labelParts": [
+            {
+              "text": "94,63 zł",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "text.secondary"
+                  },
+                  "dark": {
+                    "textColor": "text.secondary"
+                  }
+                },
+                "textAttributes": {
+                  "bold": true,
+                  "strikethrough": false
+                }
+              }
+            },
+            {
+              "text": " x 5 rat",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "text.secondary"
+                  },
+                  "dark": {
+                    "textColor": "text.secondary"
+                  }
+                },
+                "textAttributes": {
+                  "bold": false,
+                  "strikethrough": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "labelParts": [
+            {
+              "text": "z"
+            }
+          ],
+          "style": {
+            "themes": {
+              "light": {
+                "textColor": "text.secondary"
+              },
+              "dark": {
+                "textColor": "text.secondary"
+              }
+            },
+            "textAttributes": {
+              "bold": false,
+              "strikethrough": false
+            },
+            "badge": false
+          }
+        },
+        {
+          "labelParts": [
+            {
+              "icon": {
+                "id": "ALLEGRO_PAY_BADGE",
+                "alt": "Allegro Pay",
+                "sources": {
+                  "svg": {
+                    "url": "https://a.allegroimg.com/original/1289e0/d44ff4a74fe8b73e619f76c756e8",
+                    "darkModeUrl": "https://a.allegroimg.com/original/1289e0/d44ff4a74fe8b73e619f76c756e8"
+                  },
+                  "png": {
+                    "url": "https://a.allegroimg.com/original/1221bc/f8a6496742d9a66d854eb11635c2",
+                    "darkModeUrl": "https://a.allegroimg.com/original/1221bc/f8a6496742d9a66d854eb11635c2"
+                  }
+                }
+              }
+            }
+          ],
+          "style": {
+            "themes": {
+              "light": {},
+              "dark": {}
+            },
+            "badge": false
+          }
+        },
+        {
+          "labelParts": [
+            {
+              "text": "sprawdź",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "text.secondary"
+                  },
+                  "dark": {
+                    "textColor": "text.secondary"
+                  }
+                },
+                "textAttributes": {
+                  "bold": false,
+                  "strikethrough": false
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "logistics": {
+      "labels": [
+        {
+          "labelParts": [
+            {
+              "text": "dostawa w środę",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "text.primary"
+                  },
+                  "dark": {
+                    "textColor": "text.primary"
+                  }
+                },
+                "textAttributes": {
+                  "bold": true,
+                  "strikethrough": false
+                }
+              }
+            },
+            {
+              "icon": {
+                "alt": "Informacja",
+                "sources": {
+                  "svg": {
+                    "url": "https://a.allegroimg.com/original/12d15a/73be8cae4746a6108490b55c755a",
+                    "darkModeUrl": "https://a.allegroimg.com/original/124f71/b31763b24302b881110844ad9f8f"
+                  },
+                  "png": {
+                    "url": "https://a.allegroimg.com/original/124286/6d082da74c21926b613c07eb4ea2",
+                    "darkModeUrl": "https://a.allegroimg.com/original/129d30/2624da764f3a8e6fd1ef522c63fd"
+                  }
+                }
+              },
+              "contextInfo": {
+                "text": "Przewidywany przez Allegro czas dostawy na podstawie wcześniejszych dostaw sprzedającego."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "navigationCategory": {
+    "id": "256019",
+    "tree": "navigation-pl"
+  },
+  "assortmentCategory": {
+    "id": "256019",
+    "path": [
+      {
+        "id": "42540aec-367a-4e5e-b411-17c09b08e41f"
+      },
+      {
+        "id": "10"
+      },
+      {
+        "id": "67414"
+      },
+      {
+        "id": "67416"
+      },
+      {
+        "id": "67466"
+      },
+      {
+        "id": "256019"
+      }
+    ]
+  },
+  "ended": false,
+  "freebox": {
+    "id": "FREEBOX",
+    "alt": "Smart!",
+    "labels": [
+      {
+        "labelParts": [
+          {
+            "text": "Smart!",
+            "icon": {
+              "id": "FREEBOX_NOMARGIN",
+              "alt": "Smart!",
+              "sources": {
+                "svg": {
+                  "url": "https://a.allegroimg.com/original/343b4d/ed3f5c04412ab7bd70dd0a34f0cd/brand-subbrand-smart-d8bfa93f10.svg",
+                  "darkModeUrl": "https://a.allegroimg.com/original/34611c/c433ab0c4bf9a76e4f1f15b5dd1f/dark-brand-subbrand-smart-2ecf1fa38c.svg"
+                },
+                "png": {
+                  "url": "https://assets.allegrostatic.com/freebox/icons/FREEBOX_NOMARGIN_V2.png",
+                  "darkModeUrl": "https://assets.allegrostatic.com/freebox/icons/FREEBOX_NOMARGIN_V2_DARK.png"
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "id": "18509686317",
+  "itemContext": "FEATURED",
+  "name": "Robot sprzątający Roborock S6 MaxV czarny",
+  "openInNewTab": false,
+  "parameters": [
+    {
+      "name": "Stan",
+      "values": [
+        "Używany"
+      ],
+      "highlight": false
+    },
+    {
+      "name": "Gwarancja",
+      "values": [
+        "1 miesiąc"
+      ],
+      "highlight": false
+    }
+  ],
+  "promotion": {
+    "emphasized": false,
+    "bold": false,
+    "highlight": false
+  },
+  "publication": {
+    "endingTime": "2026-04-20T12:00:00.000Z"
+  },
+  "seller": {
+    "id": "47488048",
+    "title": "Firma",
+    "superSeller": false,
+    "login": "HMX24PL",
+    "userListingUrl": "https://allegro.pl/uzytkownik/HMX24PL",
+    "positiveFeedbackPercent": 97.9,
+    "positiveFeedbackCount": 1918,
+    "positiveFeedbackIcon": false,
+    "company": true
+  },
+  "sellingMode": {
+    "buyNow": {
+      "price": {
+        "amount": "648.36",
+        "currency": "PLN"
+      },
+      "popularity": 0,
+      "cartAvailable": true,
+      "additionalAddToCartButton": true
+    },
+    "auction": {
+      "price": {
+        "amount": "443.86",
+        "currency": "PLN"
+      },
+      "bidCount": 0
+    },
+    "popularityLabel": "nikt nie licytuje",
+    "popularity": {
+      "label": "nikt nie licytuje",
+      "tooltip": null
+    },
+    "isBestPriceGuarantee": false
+  },
+  "shipping": {
+    "freeDelivery": false,
+    "freeReturn": false,
+    "lowest": {
+      "amount": "14.99",
+      "currency": "PLN"
+    },
+    "itemWithDelivery": {
+      "amount": "458.85",
+      "currency": "PLN"
+    },
+    "shipmentCountryLabel": []
+  },
+  "photos": [
+    {
+      "small": "https://a.allegroimg.com/s64/11600a/a0fad6204b0a810b9bef3be337b6/Robot-sprzatajacy-Roborock-S6-MaxV-czarny",
+      "medium": "https://a.allegroimg.com/s360/11600a/a0fad6204b0a810b9bef3be337b6/Robot-sprzatajacy-Roborock-S6-MaxV-czarny"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11228e/613c84434e12ad39e9eefbac068b/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Marka-Roborock",
+      "medium": "https://a.allegroimg.com/s360/11228e/613c84434e12ad39e9eefbac068b/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Marka-Roborock"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11b9a2/9f67d08e446c93fce112e1d07a9d/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Kolor-dominujacy-czarny",
+      "medium": "https://a.allegroimg.com/s360/11b9a2/9f67d08e446c93fce112e1d07a9d/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Kolor-dominujacy-czarny"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11f9df/ae2bfbef4ac3af0059827ab32ff4/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Model-S6-MaxV",
+      "medium": "https://a.allegroimg.com/s360/11f9df/ae2bfbef4ac3af0059827ab32ff4/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Model-S6-MaxV"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/114767/579ceb5341b486cad25ecfbc88e0/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Typ-akumulatora-litowo-jonowy",
+      "medium": "https://a.allegroimg.com/s360/114767/579ceb5341b486cad25ecfbc88e0/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Typ-akumulatora-litowo-jonowy"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/115057/84e8932b4e35be0678340be8c0c8/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Napiecie-akumulatora-14-4-V",
+      "medium": "https://a.allegroimg.com/s360/115057/84e8932b4e35be0678340be8c0c8/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Napiecie-akumulatora-14-4-V"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/111033/c8eacb5d4fe6af3cefd878bc6a19/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Moc-58-W",
+      "medium": "https://a.allegroimg.com/s360/111033/c8eacb5d4fe6af3cefd878bc6a19/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Moc-58-W"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/1158e7/a219d36b482ca3c33f3db74b73d7/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Pojemnosc-zbiornika-na-kurz-0-46-l",
+      "medium": "https://a.allegroimg.com/s360/1158e7/a219d36b482ca3c33f3db74b73d7/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Pojemnosc-zbiornika-na-kurz-0-46-l"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/119e84/21c334ed421fa67198b80021e09c/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Filtr-HEPA",
+      "medium": "https://a.allegroimg.com/s360/119e84/21c334ed421fa67198b80021e09c/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Filtr-HEPA"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11cc47/f9d7bf6d4e04b005a90124456965/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Obszar-dzialania-250-m2",
+      "medium": "https://a.allegroimg.com/s360/11cc47/f9d7bf6d4e04b005a90124456965/Robot-sprzatajacy-Roborock-S6-MaxV-czarny-Obszar-dzialania-250-m2"
+    }
+  ],
+  "productReview": {
+    "rating": {
+      "average": "4.92",
+      "count": 792
+    }
+  },
+  "seo": {
+    "nofollow": false
+  },
+  "mainThumbnail": "https://a.allegroimg.com/s180/11600a/a0fad6204b0a810b9bef3be337b6/Robot-sprzatajacy-Roborock-S6-MaxV-czarny",
+  "mainThumbnailSizes": {
+    "large": {
+      "url": "https://a.allegroimg.com/s720/11600a/a0fad6204b0a810b9bef3be337b6/Robot-sprzatajacy-Roborock-S6-MaxV-czarny"
+    }
+  },
+  "url": "https://allegro.pl/produkt/robot-sprzatajacy-roborock-s6-maxv-czarny-ac06d4d9-594d-4574-8ba1-e07a88e2e5a5?offerId=18509686317",
+  "quantity": {
+    "unitType": "UNIT",
+    "value": 1
+  },
+  "vendor": "allegro",
+  "labels": {
+    "regularLabel": {
+      "text": "LICYTACJA",
+      "icon": null
+    }
+  },
+  "analytics": {
+    "itemView": [
+      {
+        "name": "deliverylabel",
+        "value": "dostawa w środę Informacja"
+      }
+    ]
+  },
+  "featured": true,
+  "generalParameters": [
+    {
+      "name": "Stan",
+      "values": [
+        "Używany"
+      ],
+      "highlight": false
+    },
+    {
+      "name": "Gwarancja",
+      "values": [
+        "1 miesiąc"
+      ],
+      "highlight": false
+    }
+  ],
+  "productRepresentativeParameters": [],
+  "productDetails": {
+    "productId": "ac06d4d9-594d-4574-8ba1-e07a88e2e5a5",
+    "productName": "Robot sprzątający Roborock S6 MaxV czarny",
+    "representativeOfferId": "18509686317",
+    "variantsDetails": null
+  },
+  "offerId": "18509686317",
+  "productizationLinks": {
+    "seoLink": null,
+    "productPage": null,
+    "recommerceProductPage": null
+  },
+  "hasInfoBox": true,
+  "tireInfo": {
+    "labels": [],
+    "keyParameters": []
+  },
+  "eventData": {
+    "offer_id": "18509686317",
+    "product_id": "ac06d4d9-594d-4574-8ba1-e07a88e2e5a5",
+    "search_id": "d519ec5d-a13b-4f54-8f79-2adca9fa4965"
+  },
+  "compatibleModel": [],
+  "sponsored": false,
+  "product": false,
+  "promoted": false
+}

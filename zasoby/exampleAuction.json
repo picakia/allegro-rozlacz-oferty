@@ -1,0 +1,243 @@
+{
+  "type": "auction",
+  "badges": {
+    "logistics": {
+      "labels": [
+        {
+          "labelParts": [
+            {
+              "text": "dostawa za 25 – 26 dni",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "#944E08"
+                  },
+                  "dark": {
+                    "textColor": "#FAC314"
+                  }
+                },
+                "textAttributes": {
+                  "bold": true,
+                  "strikethrough": false
+                }
+              }
+            },
+            {
+              "icon": {
+                "alt": "Informacja",
+                "sources": {
+                  "svg": {
+                    "url": "https://a.allegroimg.com/original/12d15a/73be8cae4746a6108490b55c755a",
+                    "darkModeUrl": "https://a.allegroimg.com/original/124f71/b31763b24302b881110844ad9f8f"
+                  },
+                  "png": {
+                    "url": "https://a.allegroimg.com/original/124286/6d082da74c21926b613c07eb4ea2",
+                    "darkModeUrl": "https://a.allegroimg.com/original/129d30/2624da764f3a8e6fd1ef522c63fd"
+                  }
+                }
+              },
+              "contextInfo": {
+                "text": "Przewidywany przez Allegro czas dostawy na podstawie wcześniejszych dostaw sprzedającego."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "navigationCategory": {
+    "id": "256019",
+    "tree": "navigation-pl"
+  },
+  "assortmentCategory": {
+    "id": "256019",
+    "path": [
+      {
+        "id": "42540aec-367a-4e5e-b411-17c09b08e41f"
+      },
+      {
+        "id": "10"
+      },
+      {
+        "id": "67414"
+      },
+      {
+        "id": "67416"
+      },
+      {
+        "id": "67466"
+      },
+      {
+        "id": "256019"
+      }
+    ]
+  },
+  "ended": false,
+  "id": "18504078620",
+  "itemContext": "REGULAR",
+  "name": "Robot sprzątający Roborock S5 Max biały",
+  "openInNewTab": false,
+  "parameters": [
+    {
+      "name": "Stan",
+      "values": [
+        "Uszkodzony"
+      ],
+      "highlight": false
+    },
+    {
+      "name": "Gwarancja",
+      "values": [
+        "1 miesiąc"
+      ],
+      "highlight": false
+    }
+  ],
+  "promotion": {
+    "emphasized": false,
+    "bold": false,
+    "highlight": false
+  },
+  "publication": {
+    "endingTime": "2026-04-23T08:22:00.000Z"
+  },
+  "seller": {
+    "id": "81370839",
+    "title": "Firma",
+    "superSeller": false,
+    "login": "Elrecycling",
+    "userListingUrl": "https://allegro.pl/uzytkownik/Elrecycling",
+    "positiveFeedbackPercent": 97.5,
+    "positiveFeedbackCount": 6139,
+    "positiveFeedbackIcon": false,
+    "company": true
+  },
+  "sellingMode": {
+    "auction": {
+      "price": {
+        "amount": "2.00",
+        "currency": "PLN"
+      },
+      "bidCount": 2
+    },
+    "popularityLabel": "2 osoby licytują",
+    "popularity": {
+      "label": "2 osoby licytują",
+      "tooltip": null
+    },
+    "isBestPriceGuarantee": false
+  },
+  "shipping": {
+    "freeDelivery": false,
+    "freeReturn": false,
+    "lowest": {
+      "amount": "25.00",
+      "currency": "PLN"
+    },
+    "itemWithDelivery": {
+      "amount": "27.00",
+      "currency": "PLN"
+    },
+    "shipmentCountryLabel": []
+  },
+  "photos": [
+    {
+      "small": "https://a.allegroimg.com/s64/114f55/e1c8cfa4455480421c51df231094/Robot-sprzatajacy-Roborock-S5-Max-bialy",
+      "medium": "https://a.allegroimg.com/s360/114f55/e1c8cfa4455480421c51df231094/Robot-sprzatajacy-Roborock-S5-Max-bialy"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/1173a2/e7a2d2d345b692d39818d37e0dfc/Robot-sprzatajacy-Roborock-S5-Max-bialy-Marka-Roborock",
+      "medium": "https://a.allegroimg.com/s360/1173a2/e7a2d2d345b692d39818d37e0dfc/Robot-sprzatajacy-Roborock-S5-Max-bialy-Marka-Roborock"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11813f/dc2fedf84a5e9503bce96ec73596/Robot-sprzatajacy-Roborock-S5-Max-bialy-Kolor-dominujacy-czarny",
+      "medium": "https://a.allegroimg.com/s360/11813f/dc2fedf84a5e9503bce96ec73596/Robot-sprzatajacy-Roborock-S5-Max-bialy-Kolor-dominujacy-czarny"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11c1d8/df5acf6f4dc28483cbe89f09799e/Robot-sprzatajacy-Roborock-S5-Max-bialy-Moc-58-W",
+      "medium": "https://a.allegroimg.com/s360/11c1d8/df5acf6f4dc28483cbe89f09799e/Robot-sprzatajacy-Roborock-S5-Max-bialy-Moc-58-W"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/119b45/62e52cda43d99f9bb0d88644b6f9/Robot-sprzatajacy-Roborock-S5-Max-bialy-Waga-produktu-z-opakowaniem-jednostkowym-6-1-kg",
+      "medium": "https://a.allegroimg.com/s360/119b45/62e52cda43d99f9bb0d88644b6f9/Robot-sprzatajacy-Roborock-S5-Max-bialy-Waga-produktu-z-opakowaniem-jednostkowym-6-1-kg"
+    }
+  ],
+  "productReview": {
+    "rating": {
+      "average": "4.92",
+      "count": 1335
+    }
+  },
+  "seo": {
+    "nofollow": false
+  },
+  "mainThumbnail": "https://a.allegroimg.com/s180/114f55/e1c8cfa4455480421c51df231094/Robot-sprzatajacy-Roborock-S5-Max-bialy",
+  "mainThumbnailSizes": {
+    "large": {
+      "url": "https://a.allegroimg.com/s720/114f55/e1c8cfa4455480421c51df231094/Robot-sprzatajacy-Roborock-S5-Max-bialy"
+    }
+  },
+  "url": "https://allegro.pl/produkt/robot-sprzatajacy-roborock-s5-max-czarny-52304757-ccc4-4cff-9c0e-4324004ee8d3?offerId=18504078620",
+  "quantity": {
+    "unitType": "UNIT",
+    "value": 1
+  },
+  "vendor": "allegro",
+  "labels": {
+    "regularLabel": {
+      "text": "LICYTACJA",
+      "icon": null
+    }
+  },
+  "analytics": {
+    "itemView": [
+      {
+        "name": "deliverylabel",
+        "value": "dostawa za 25 – 26 dni Informacja"
+      }
+    ]
+  },
+  "generalParameters": [
+    {
+      "name": "Stan",
+      "values": [
+        "Uszkodzony"
+      ],
+      "highlight": false
+    },
+    {
+      "name": "Gwarancja",
+      "values": [
+        "1 miesiąc"
+      ],
+      "highlight": false
+    }
+  ],
+  "productRepresentativeParameters": [],
+  "productDetails": {
+    "productId": "52304757-ccc4-4cff-9c0e-4324004ee8d3",
+    "productName": "Robot sprzątający Roborock S5 MAX czarny",
+    "representativeOfferId": null,
+    "variantsDetails": null
+  },
+  "offerId": "18504078620",
+  "productizationLinks": {
+    "seoLink": null,
+    "productPage": null,
+    "recommerceProductPage": null
+  },
+  "hasInfoBox": false,
+  "tireInfo": {
+    "labels": [],
+    "keyParameters": []
+  },
+  "eventData": {
+    "offer_id": "18504078620",
+    "product_id": "52304757-ccc4-4cff-9c0e-4324004ee8d3",
+    "search_id": "3026793d-1075-4089-ab69-a45c6d61e2a2"
+  },
+  "compatibleModel": [],
+  "sponsored": false,
+  "product": false,
+  "promoted": false
+}

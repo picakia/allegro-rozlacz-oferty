@@ -1,4 +1,4 @@
-import opboxJSON from './zasoby/opbox.json';
+import opboxJSON from './rozlaczone.json';
 const getLinks = () => {
   //const opbox = JSON.parse(opboxJSON);
   //const listings = opboxJSON.dataSources['listing-web-bff:allegro.listing:3.0'];
