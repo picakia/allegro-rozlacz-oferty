@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2026-04-19_23-15
+// @version      2026-04-20_00-58
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
 // @match        https://allegro.pl/listing*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=allegro.pl
 // @grant        GM_xmlhttpRequest
+// @connect      allegrolokalnie.pl
 // ==/UserScript==
 
 // enable to speed up the script at a cost of being blocked
@@ -57,6 +58,155 @@ const getOpboxJSON = async link => {
     return {};
   }
 };
+const gmFetch = url =>
+  new Promise((resolve, reject) => {
+    GM_xmlhttpRequest({
+      method: "GET",
+      url,
+      onload: res => resolve(res.responseText),
+      onerror: err => reject(err),
+    });
+  });
+
+const buildLokalnieURL = mainURL => {
+  const keyword = mainURL.searchParams.get("string");
+  if (!keyword) return null;
+  const lokalnieURL = new URL(
+    `https://allegrolokalnie.pl/oferty/q/${encodeURIComponent(keyword)}`,
+  );
+  lokalnieURL.searchParams.set("zrodlo", "lokalnie");
+
+  // Mapping: allegro order -> lokalnie sort
+  const orderMap = {
+    p: "price-asc",
+    pd: "price-desc",
+    n: "startingTime-desc",
+  };
+  const order = mainURL.searchParams.get("order");
+  if (order && orderMap[order]) {
+    lokalnieURL.searchParams.set("sort", orderMap[order]);
+  }
+
+  // Price range
+  const priceFrom = mainURL.searchParams.get("price_from");
+  const priceTo = mainURL.searchParams.get("price_to");
+  if (priceFrom) lokalnieURL.searchParams.set("price_from", priceFrom);
+  if (priceTo) lokalnieURL.searchParams.set("price_to", priceTo);
+
+  // Smart
+  if (mainURL.searchParams.get("sm") === "1") {
+    lokalnieURL.searchParams.set("dostawa_smart", "1");
+  }
+
+  return lokalnieURL.href;
+};
+
+const parseLokalnieHTML = html => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const articles = doc.querySelectorAll("article.mlc-itembox__container");
+  return Array.from(articles).map(article => {
+    const link = article.querySelector("a.mlc-card[itemprop='url']");
+    const href = link?.getAttribute("href") || "";
+    const img = article.querySelector("img[itemprop='image']");
+    const title = article.querySelector("h3.mlc-itembox__title");
+    const priceEl = article.querySelector(".ml-offer-price__dollars");
+    const centsEl = article.querySelector(".ml-offer-price__cents");
+    const price = (priceEl?.textContent?.trim() || "0") + "." + (centsEl?.textContent?.trim() || "00");
+
+    // Offer type: buy_now, classified, bidding
+    const offerTypeEl = article.querySelector(".mlc-itembox__offer-type");
+    const offerTypeClass = offerTypeEl?.className || "";
+    const isBidding = offerTypeClass.includes("--bidding");
+    const offerTypeText = offerTypeEl?.textContent?.trim() || "";
+
+    // Parameters
+    const paramEls = article.querySelectorAll(".mlc-itembox__params__param .ml-text-small");
+    const parameters = Array.from(paramEls).map(el => {
+      const text = el.textContent.trim();
+      const colonIdx = text.indexOf(":");
+      if (colonIdx === -1) return { name: text, values: [""] };
+      return {
+        name: text.substring(0, colonIdx).trim(),
+        values: [text.substring(colonIdx + 1).trim()],
+      };
+    });
+
+    // Smart
+    const isSmart = !!article.querySelector(".mlc-smart-icon");
+
+    // Location
+    const locationEl = article.querySelector("address[itemprop='address']");
+    const location = locationEl?.textContent?.trim() || null;
+
+    // Badges
+    const badgeEls = article.querySelectorAll(".ml-badges__badge");
+    const badges = Array.from(badgeEls).map(b => b.textContent.trim());
+
+    // Auction info
+    let endingTime = null;
+    let popularityLabel = null;
+    if (isBidding) {
+      const timeEl = article.querySelector("[data-mlc-itembox-bidding-remaining-time]");
+      if (timeEl) {
+        try {
+          const timeData = JSON.parse(timeEl.getAttribute("data-mlc-itembox-bidding-remaining-time"));
+          endingTime = timeData.endingAt;
+        } catch (e) {}
+      }
+      const biddingProps = article.querySelectorAll(".mlc-itembox__bidding-props__prop");
+      if (biddingProps.length >= 2) {
+        popularityLabel = biddingProps[1].textContent.trim();
+      }
+    }
+
+    return {
+      href: href.startsWith("/") ? "https://allegrolokalnie.pl" + href : href,
+      name: title?.textContent?.trim() || "",
+      image: img?.getAttribute("src") || "",
+      price,
+      isBidding,
+      offerType: offerTypeText,
+      parameters,
+      isSmart,
+      location,
+      badges,
+      endingTime,
+      popularityLabel,
+    };
+  });
+};
+
+const generateLokalnieProduct = item => {
+  return {
+    url: item.href,
+    name: item.name,
+    mainImg: item.image,
+    offerType: item.offerType,
+    seller: {
+      isCompany: false,
+      isSuperSeller: false,
+      login: item.location || "Allegro Lokalnie",
+      positiveFeedbackPercent: null,
+      positiveFeedbackCount: null,
+    },
+    isLokalnie: true,
+    isSmart: item.isSmart,
+    parameters: item.parameters,
+    productState: item.parameters.find(p => p.name === "Stan")?.values?.[0] || null,
+    whenDelivery: null,
+    whenDeliveryColor: null,
+    priceShipping: null,
+    popularityLabel: item.popularityLabel,
+    isBidding: item.isBidding,
+    price: item.price,
+    isBiddingBuyNow: false,
+    biddingBuyNowPrice: 0,
+    biddingTimeLeft: item.endingTime ? daysTillEnd(item.endingTime) : 0,
+    endingTime: item.endingTime,
+  };
+};
+
 const daysTillEnd = endDate => {
   const millisecondsPerDay = 24 * 60 * 60 * 1000;
   return Math.round((new Date(endDate) - new Date()) / millisecondsPerDay);
@@ -64,9 +214,6 @@ const daysTillEnd = endDate => {
 // Custom format for product
 const generateProduct = listingData => {
   //console.log(listingData);
-  if (listingData.isLocal) {
-    return {};
-  }
   let parsedProduct = {};
   try {
     const parsedUrl = new URL(listingData.url);
@@ -222,15 +369,15 @@ const processSearchResults = async (
     DOM.progressBar.text.innerText = `[PAGE ${currentPage}] Restoring offers for ${article.name} - nested level 0`;
     console.log(DOM.progressBar.text.innerText);
 
+    if (article.url.includes("https://allegrolokalnie.pl/")) {
+      continue;
+      //console.log(`LOCAL OFFER: article.url`);
+    }
+
     const articleLink = article.productizationLinks?.productPage?.url;
     if (!articleLink) {
       // Article does not have "Porównaj x ofert" button
       //console.log(article);
-      const isLocal = article.url.includes("https://allegrolokalnie.pl/");
-      if (isLocal) {
-        continue;
-        //console.log(`LOCAL OFFER: article.url`);
-      }
 
       const parsedProduct = generateProduct(article);
       if (!parsedProduct.url) continue;
@@ -336,6 +483,24 @@ const restore = async () => {
     //await Promise.all(promiseArray);
   }
 
+  // Fetch Allegro Lokalnie offers
+  DOM.progressBar.text.innerText = `Fetching Allegro Lokalnie offers...`;
+  console.log(DOM.progressBar.text.innerText);
+  await new Promise(r => setTimeout(r, 1));
+  const lokalnieURL = buildLokalnieURL(mainURL);
+  if (lokalnieURL) {
+    try {
+      const lokalnieHTML = await gmFetch(lokalnieURL);
+      const lokalnieItems = parseLokalnieHTML(lokalnieHTML);
+      console.log(`Allegro Lokalnie: found ${lokalnieItems.length} offers`);
+      for (const item of lokalnieItems) {
+        articleList.push(generateLokalnieProduct(item));
+      }
+    } catch (err) {
+      console.error("Failed to fetch Allegro Lokalnie", err);
+    }
+  }
+
   let toDeduplicate = [];
 
   // Clean results
@@ -412,7 +577,7 @@ const restore = async () => {
   // sort and push all articles to main page
 
   DOM.mainArticles.innerHTML = everyArticle;
-  const paginationUrl = window.location.href.replace(/&p=\d+/, '');
+  const paginationUrl = window.location.href.replace(/&p=\d+/, "");
   document.querySelector('[data-role="paginationBottom"]').innerHTML =
     `<div class="m9vn_d2" data-role="paginationBottom"><div data-box-name="pagination bottom"><div class="mpof_ki m7f5_6m m7f5_sf_s" data-param="p" data-one-based="true"><div class="mpof_ki munh_16 m3h2_16 mt1t_fz munh_56_s"><div class="mpof_ki m389_6m" role="navigation" aria-label="paginacja"><a href="${paginationUrl}" data-page="1" class="l8c4v l195b mh36_8 mvrt_8 l1tbk _6d89c_N3YpX l97x9" aria-current="page">1</a><div class="munh_8 m3h2_8 msa3_z4 mgmw_wo _1h7wt">z</div><span class="_1h7wt mgmw_wo mh36_8 mvrt_8">1</span></div></div></div></div></div>`;
 
@@ -460,6 +625,7 @@ const genListing = listingData => {
     mainImg,
     seller,
     isSmart,
+    isLokalnie,
     parameters,
     productState,
     whenDelivery,
@@ -472,6 +638,7 @@ const genListing = listingData => {
     biddingBuyNowPrice,
     biddingTimeLeft,
     endingTime,
+    offerType,
   } = listingData;
   const {
     isCompany,
@@ -505,17 +672,24 @@ const genListing = listingData => {
     <div class="mh36_8 mjyo_6x _1e32a_2Cd7P" style="width: 100%;">
       <div class="_1e32a_qDdj-">
         ${
-          isCompany
-            ? '<div class="mzmg_f9 _1e32a_v6GqI"><div><div class="mzmg_f9"><p class="mgmw_3z mpof_z0 mgn2_12 mp4t_0 mryx_0">Firma</p></div></div></div>'
-            : ""
+          isLokalnie
+            ? '<div class="mzmg_f9 _1e32a_v6GqI"><div><div class="mzmg_f9"><p class="mgmw_3z mpof_z0 mgn2_12 mp4t_0 mryx_0">Prywatny sprzedawca</p></div></div></div>'
+            : isCompany
+              ? '<div class="mzmg_f9 _1e32a_v6GqI"><div><div class="mzmg_f9"><p class="mgmw_3z mpof_z0 mgn2_12 mp4t_0 mryx_0">Firma</p></div></div></div>'
+              : ""
         }
         <div class="_1e32a_meWPT _1e32a_WrGF-">
         ${
-          isBidding
-            ? '<div class="mpof_ki mwdn_1 mgn2_12 m389_6m"><p class="mpof_uk mryx_0 mp4t_0">LICYTACJA</p></div><p class="mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_uk mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0 _1e32a_LO84T">' +
-              biddingTimeLeft +
-              (biddingTimeLeft === 1 ? " dzień</p>" : " dni</p>")
-            : ""
+          isLokalnie && offerType
+            ? '<div class="mpof_ki mwdn_1 mgn2_12 m389_6m"><p class="mpof_uk mryx_0 mp4t_0">' + offerType.toUpperCase() + '</p></div>' +
+              (isBidding && biddingTimeLeft != null
+                ? '<p class="mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_uk mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0 _1e32a_LO84T">' + biddingTimeLeft + (biddingTimeLeft === 1 ? " dzień</p>" : " dni</p>")
+                : '')
+            : isBidding
+              ? '<div class="mpof_ki mwdn_1 mgn2_12 m389_6m"><p class="mpof_uk mryx_0 mp4t_0">LICYTACJA</p></div><p class="mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_uk mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0 _1e32a_LO84T">' +
+                biddingTimeLeft +
+                (biddingTimeLeft === 1 ? " dzień</p>" : " dni</p>")
+              : ""
         }
           <h2 class="m9qz_yp mqu1_16 mp4t_0 m3h2_0 mryx_0 munh_0">
             <a
@@ -524,7 +698,12 @@ const genListing = listingData => {
               >${name}</a
             >
           </h2>
-          <div class="mpof_ki mwdn_1 m389_6m m389_a6_m">
+          ${
+            isLokalnie
+              ? `<div class="mpof_ki mwdn_1 m389_6m m389_a6_m">
+            <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0"><span class="mgmw_wo">${login}</span></p>
+          </div>`
+              : `<div class="mpof_ki mwdn_1 m389_6m m389_a6_m">
             ${
               isSuperSeller
                 ? '<p class="mpof_ki m389_6m msa3_z4 mgn2_12 mryx_0 mp4t_0">od <span class="mpof_ki mp7g_oh msa3_ae _1e32a_cwPPZ"><span class="mp7g_oh mpof_ki"><button aria-label="Super Sprzedawca zobacz szczegóły" aria-expanded="false" class="mgn2_12 mp0t_0a mqu1_g3 mli8_k4 mgmw_3z mx7m_0 mp4t_0 m3h2_0 mryx_0 munh_0 mg9e_0 mvrt_0 mj7a_0 mh36_0 mzmg_7i msts_n7"><picture><source media="(prefers-color-scheme: dark)" srcset="https://a.allegroimg.com/original/34e1bf/82d1aebc4a9db9bef96345fd1e99/dark-information-common-super-seller-236577cfa7"><img src="https://a.allegroimg.com/original/34dd95/40d81c26458ca692070c8ed7eae5/information-common-super-seller-236577cfa7" alt="Super Sprzedawcy" class="m7er_56 _1e32a_97Mma mpof_ki _1e32a_Do2eA"></picture></button><span class="mpof_5r mpof_3f_l mpof_3f"><span class="mjyo_6x mp7g_f6 mjb5_w6 msbw_2 mldj_2 mtag_2 mm2b_2 mgmw_wo msts_n6 m7er_k4 ti1554 ti1nw9 mpof_5r ti7yw2"></span></span></span></span> Super Sprzedawcy</p><div class="mh36_4 mvrt_4 mpof_z0">|</div>'
@@ -537,14 +716,17 @@ const genListing = listingData => {
             </div>
             ${
               positiveFeedbackPercent
-                ? `<div class="m3h2_8"><p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">Poleca sprzedającego: <span class="mgmw_wo">${positiveFeedbackPercent}%</span></p></div>`
+                ? '<div class="m3h2_8"><p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">Poleca sprzedającego: <span class="mgmw_wo">' +
+                  positiveFeedbackPercent +
+                  "%</span></p></div>"
                 : ""
             }
             <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">${positiveFeedbackCount} ocen</p>
-          </div>
+          </div>`
+          }
           <div>
             <dl class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0 mjru_k4 meqh_en msa3_ae m6ax_n4 mqu1_g3 _1e32a_hUR4a _1e32a_LsWHh">
-              ${parameters.map(p => `<dt class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_3z _1e32a_bkpJC">${p.name}</dt><dd class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_wo mvrt_8">${p.values.join(", ")}</dd>`).join("")}
+              ${parameters.map(p => `<dt class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_3z _1e32a_bkpJC">${p.name}</dt> <dd class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_wo mvrt_8">${p.values.join(", ")}</dd>`).join("")}
             </dl>
           </div>
           <div class="mj7a_4 mg9e_4 _1e32a_IAwmj">
@@ -553,7 +735,7 @@ const genListing = listingData => {
                 <p aria-label="${price}&nbsp;zł aktualna cena" tabindex="0" class="mp4t_0 m3h2_0 mryx_0 munh_0 mpof_uk">
                   <span
                     class="mli8_k4 msa3_z4 mqu1_1 mp0t_ji m9qz_yo mgmw_qw mgn2_27 mgn2_30_s"
-                    >${price.split(".")[0]},<span class="mgn2_19 mgn2_21_s m9qz_yq">${price.split(".")[1]}</span
+                    >${price.split(".")[0]},<span class="mgn2_19 mgn2_21_s m9qz_yq">${price.split(".")[1] || "00"}</span
                     >&nbsp;<span class="mgn2_19 mgn2_21_s m9qz_yq"
                       >zł</span
                     ></span
@@ -574,10 +756,16 @@ const genListing = listingData => {
                 '&nbsp;zł</span><span class="m9qz_yp">kup teraz</span></p>'
               : ""
           }
-          <p class="mqu1_g3 mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">
+          ${
+            priceShipping
+              ? `<p class="mqu1_g3 mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">
             ${priceShipping}&nbsp;zł z dostawą
-          </p>
-          <span class="mgn2_12 mpof_z0 mp4t_0 m3h2_0 mryx_0 munh_0">
+          </p>`
+              : ""
+          }
+          ${
+            whenDelivery
+              ? `<span class="mgn2_12 mpof_z0 mp4t_0 m3h2_0 mryx_0 munh_0">
             <span class="mpof_uk mryx_0 mp4t_0 _1e32a_sjD6n">
               <span
                 style="
@@ -588,12 +776,23 @@ const genListing = listingData => {
                 >${whenDelivery}</span
               >
             </span>
-          </span>
+          </span>`
+              : ""
+          }
+          ${isLokalnie ? '<span class="mqu1_1"><picture><source media="(prefers-color-scheme: dark)" srcset="https://a.allegroimg.com/original/34cfc8/10ec4f874e53943e4874ec35cf46/dark-brand-subbrand-allegro-lokalnie-9ec666e2c7"><img src="https://a.allegroimg.com/original/34a54b/cf0e78534a3db96bc835307f3006/brand-subbrand-allegro-lokalnie-9d019981af" alt="Allegro Lokalnie"></picture></span>' : ""}
         </div>
         <div class="mg9e_4 mj7a_8 mpof_ki myre_zn myre_8v_l m389_a6 m389_6m_l m7f5_0a mp4t_0 mp4t_16_l _1e32a_orZUV">
           ${popularityLabel ? '<div class="mpof_vs mgn2_12 mqu1_1 mgmw_3z"><span>' + popularityLabel + "</span></div>" : ""}
           <div class="mpof_ki m389_6m mp4t_16 mp4t_0_l">
-            ${!isBidding || isBiddingBuyNow ? '<button data-role-type="add-to-cart-button" class="mgn2_16 mp0t_0a m9qz_yq mp7g_oh mtsp_ib mli8_k4 mp4t_0 mryx_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_8 mj7a_8 mjir_sv m2ha_2 m8qd_vz mjt1_n2 m09p_40 b89vd mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp btnch b8x7t munh_0 munh_16_l m3h2_0 m3h2_8_m"><span>dodaj do koszyka</span></button>' : ""}<button
+            ${
+              isLokalnie
+                ? '<a href="' +
+                  url +
+                  '" target="_blank" rel="noreferrer" class="mgn2_16 mp0t_0a m9qz_yq mp7g_oh mtsp_ib mli8_k4 mp4t_0 mryx_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_8 mj7a_8 mjir_sv m2ha_2 m8qd_vz mjt1_n2 m09p_40 b89vd mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp btnch b8x7t munh_0 munh_16_l m3h2_0 m3h2_8_m" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;"><span>Zobacz ogłoszenie</span></a>'
+                : !isBidding || isBiddingBuyNow
+                  ? '<button data-role-type="add-to-cart-button" class="mgn2_16 mp0t_0a m9qz_yq mp7g_oh mtsp_ib mli8_k4 mp4t_0 mryx_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_8 mj7a_8 mjir_sv m2ha_2 m8qd_vz mjt1_n2 m09p_40 b89vd mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp btnch b8x7t munh_0 munh_16_l m3h2_0 m3h2_8_m"><span>dodaj do koszyka</span></button>'
+                  : ""
+            }<button
               title="Dodaj do ulubionych"
               aria-label="Dodaj do ulubionych ${name}"
               class="m7er_40 mp0t_0a m9qz_yq mp7g_oh mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 mqen_m6 meqh_en m0qj_5r msts_n7 mjir_sv m2ha_2 m8qd_vz mjt1_n2 m09p_40 b89vd mqu1_1 mgn2_13 mg9e_0 mvrt_0 mj7a_0 mh36_0 mse2_40 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b2mt3"

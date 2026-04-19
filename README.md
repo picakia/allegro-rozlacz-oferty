@@ -43,7 +43,7 @@ Dodatkowo działa też sortowanie po najwyższej cenie, w tym celu **przed klikn
 ## Co dalej - od najpilniejszych
 
 - Obsługa błędów i informacja graficzna dla Usera
-- Dodanie ofert z allegrolokalnie.pl
+- Dodanie ofert z allegrolokalnie.pl - więcej niż 1 strona
 - Funkcjonalny guzik "Dodaj do koszyka"
 - Funkcjonalny guzik "Dodaj do ulubionych"
 - Wrzucenie skryptu do GreasyFork
