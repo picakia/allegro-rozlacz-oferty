@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2026-04-18_20-11
+// @version      2026-04-19_23-15
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -15,7 +15,6 @@ const fastMode = false;
 // enable to show only offers that have your keywords in the title
 const cleanOffers = false;
 
-let progressPercent = 0;
 let articleList = [];
 const getDOM = () => {
   return {
@@ -47,7 +46,7 @@ const getOpboxJSON = async link => {
       console.error(
         `Failed to get Opbox json - STATUS: ${mainOpboxRes.status}`,
       );
-      console.error(mainOpboxRes.text());
+      console.error(await mainOpboxRes.text());
       // TODO: Create retry
     }
     const mainOpbox = await mainOpboxRes.json();
@@ -121,14 +120,7 @@ const generateProduct = listingData => {
       biddingTimeLeft: 0,
       endingTime: listingData.publication?.endingTime,
     };
-    if (
-      parsedProduct.whenDelivery &&
-      parsedProduct.whenDelivery.includes("jutro")
-    ) {
-      parsedProduct.whenDelivery = `${
-        parsedProduct.whenDelivery.split("dostawa jutro")[0]
-      }<span class="mli2_0" style="color: rgb(27, 184, 40); font-weight: bold; text-decoration: none;">dostawa jutro</span>`;
-    }
+
     if (parsedProduct.isBidding) {
       parsedProduct.isBiddingBuyNow = listingData.sellingMode.buyNow
         ? true
@@ -184,6 +176,7 @@ const processProductPage = async (
 
     for (const nestedArticle of nestedProducts) {
       const parsedProduct = generateProduct(nestedArticle);
+      if (!parsedProduct.url) continue;
       articleList.push(parsedProduct);
     }
   }
@@ -213,8 +206,6 @@ const processSearchResults = async (
   );
   //console.log(productsToProcess);
 
-  const productsCount = productsToProcess.length;
-
   // loop through each article
   let promiseArrayPrd = [];
   for (const [index, article] of productsToProcess.entries()) {
@@ -242,6 +233,7 @@ const processSearchResults = async (
       }
 
       const parsedProduct = generateProduct(article);
+      if (!parsedProduct.url) continue;
 
       // Add product to array
       articleList.push(parsedProduct);
@@ -405,10 +397,10 @@ const restore = async () => {
   // sort price asc for now
   switch (mainURL.searchParams.get("order")) {
     case "pd":
-      uniqueProducts.sort((a, b) => b.price - a.price);
+      uniqueProducts.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
       break;
     default:
-      uniqueProducts.sort((a, b) => a.price - b.price);
+      uniqueProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
       break;
   }
 
@@ -420,8 +412,9 @@ const restore = async () => {
   // sort and push all articles to main page
 
   DOM.mainArticles.innerHTML = everyArticle;
+  const paginationUrl = window.location.href.replace(/&p=\d+/, '');
   document.querySelector('[data-role="paginationBottom"]').innerHTML =
-    '<div class="m9vn_d2" data-role="paginationBottom"><div data-box-name="pagination bottom" data-box-id="xiI_xzzDRBaVlh7UFNK77w==" data-prototype-id="allegro.pagination" data-prototype-version="2.8" data-civ="222" data-analytics-enabled="" data-analytics-category="allegro.pagination"><div class="mpof_ki m7f5_6m m7f5_sf_s" data-param="p" data-one-based="true" data-listing-id="-11176257601724423245020" data-without-better-sort="true"><div class="mpof_ki munh_16 m3h2_16 mt1t_fz munh_56_s"><div class="mpof_ki m389_6m" role="navigation" aria-label="paginacja"><a href="https://allegro.pl/kategoria/akcesoria-gsm-etui-i-pokrowce-353?string=iphone%207&amp;order=p&amp;typ=plecki&amp;stan=nowe&amp;offerTypeAuction=2&amp;kolor=bezbarwny" data-page="1" class="l8c4v l195b mh36_8 mvrt_8 l1tbk _6d89c_N3YpX l97x9" aria-current="page">1</a><div class="munh_8 m3h2_8 msa3_z4 mgmw_wo _1h7wt">z</div><span class="_1h7wt mgmw_wo mh36_8 mvrt_8">1</span></div></div></div></div></div>';
+    `<div class="m9vn_d2" data-role="paginationBottom"><div data-box-name="pagination bottom"><div class="mpof_ki m7f5_6m m7f5_sf_s" data-param="p" data-one-based="true"><div class="mpof_ki munh_16 m3h2_16 mt1t_fz munh_56_s"><div class="mpof_ki m389_6m" role="navigation" aria-label="paginacja"><a href="${paginationUrl}" data-page="1" class="l8c4v l195b mh36_8 mvrt_8 l1tbk _6d89c_N3YpX l97x9" aria-current="page">1</a><div class="munh_8 m3h2_8 msa3_z4 mgmw_wo _1h7wt">z</div><span class="_1h7wt mgmw_wo mh36_8 mvrt_8">1</span></div></div></div></div></div>`;
 
   DOM.progressBar.bar.style.width = "100%";
   DOM.progressBar.bar.innerText = "100%";
@@ -460,7 +453,7 @@ runWhenReady('[data-role="aboveItems"]', () => {
 });
 
 const genListing = listingData => {
-  if (!listingData) return;
+  if (!listingData || !listingData.seller) return;
   const {
     url,
     name,
@@ -521,7 +514,7 @@ const genListing = listingData => {
           isBidding
             ? '<div class="mpof_ki mwdn_1 mgn2_12 m389_6m"><p class="mpof_uk mryx_0 mp4t_0">LICYTACJA</p></div><p class="mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_uk mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0 _1e32a_LO84T">' +
               biddingTimeLeft +
-              " dni</p>"
+              (biddingTimeLeft === 1 ? " dzień</p>" : " dni</p>")
             : ""
         }
           <h2 class="m9qz_yp mqu1_16 mp4t_0 m3h2_0 mryx_0 munh_0">

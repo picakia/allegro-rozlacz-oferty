@@ -1,0 +1,1086 @@
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+        {
+            "position": 1,
+            "item": {
+                "name": "Oryginalne Koło napędowe Roborock S5 prawe",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ecc0c/b9cba56b46edac78e9435a7e0a3d",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ecc0c/b9cba56b46edac78e9435a7e0a3d"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalne-kolo-napedowe-roborock-s5-prawe",
+                "offers": {
+                    "price": "19.99",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 2,
+            "item": {
+                "name": "Oryginalny Silnik ssący Turbina Roborock S5 2kPa 20N704P200 KOMPLET",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e71f8/4a05bfbc4e85becd4c08bbb0ebcb",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e71f8/4a05bfbc4e85becd4c08bbb0ebcb"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalny-silnik-ssacy-turbina-roborock-s5-2kpa-20n704p200-komplet-utz",
+                "offers": {
+                    "price": "45",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 3,
+            "item": {
+                "name": "Oryginalny Laser LDS02RR Roborock S4/S5/S6/S7 moduł lasera",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e32f8/29f1df364924a08ef5615105c3fb",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e32f8/29f1df364924a08ef5615105c3fb"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalny-laser-lds02rr-roborock-s4s5s6s7-modul-lasera-kxp",
+                "offers": {
+                    "price": "59",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 4,
+            "item": {
+                "name": "R19 Głośnik Xiaomi Roborock S5 S50 S55",
+                "image": {
+                    "url": "https://allegro.pl/oferta/r19-glosnik-xiaomi-roborock-s5-s50-s55-12738135810",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://allegro.pl/oferta/r19-glosnik-xiaomi-roborock-s5-s50-s55-12738135810"
+                },
+                "url": "https://allegro.pl/oferta/r19-glosnik-xiaomi-roborock-s5-s50-s55-12738135810",
+                "offers": {
+                    "price": "30",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 5,
+            "item": {
+                "name": "R15 Osłona Lasera LDS Xiaomi Roborock S50 S55 s5",
+                "image": {
+                    "url": "https://allegro.pl/oferta/r15-oslona-lasera-lds-xiaomi-roborock-s50-s55-s5-12737879486",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://allegro.pl/oferta/r15-oslona-lasera-lds-xiaomi-roborock-s50-s55-s5-12737879486"
+                },
+                "url": "https://allegro.pl/oferta/r15-oslona-lasera-lds-xiaomi-roborock-s50-s55-s5-12737879486",
+                "offers": {
+                    "price": "30",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 6,
+            "item": {
+                "name": "R18 Wylot i filtr turbiny Roborock S5 S50 S55",
+                "image": {
+                    "url": "https://allegro.pl/oferta/r18-wylot-i-filtr-turbiny-roborock-s5-s50-s55-12738026472",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://allegro.pl/oferta/r18-wylot-i-filtr-turbiny-roborock-s5-s50-s55-12738026472"
+                },
+                "url": "https://allegro.pl/oferta/r18-wylot-i-filtr-turbiny-roborock-s5-s50-s55-12738026472",
+                "offers": {
+                    "price": "30",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 7,
+            "item": {
+                "name": "R16 Org. moduł reset, Xiaomi ROBOROCK S50 S55 s5",
+                "image": {
+                    "url": "https://allegro.pl/oferta/r16-org-modul-reset-xiaomi-roborock-s50-s55-s5-12737940578",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://allegro.pl/oferta/r16-org-modul-reset-xiaomi-roborock-s50-s55-s5-12737940578"
+                },
+                "url": "https://allegro.pl/oferta/r16-org-modul-reset-xiaomi-roborock-s50-s55-s5-12737940578",
+                "offers": {
+                    "price": "35",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 8,
+            "item": {
+                "name": "R14 Zderzak osłonka Xiaomi Roborock S50 S55 s5",
+                "image": {
+                    "url": "https://allegro.pl/oferta/r14-zderzak-oslonka-xiaomi-roborock-s50-s55-s5-12737817606",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://allegro.pl/oferta/r14-zderzak-oslonka-xiaomi-roborock-s50-s55-s5-12737817606"
+                },
+                "url": "https://allegro.pl/oferta/r14-zderzak-oslonka-xiaomi-roborock-s50-s55-s5-12737817606",
+                "offers": {
+                    "price": "20",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 9,
+            "item": {
+                "name": "Robot sprzątający Roborock S5 max",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ee9bc/0cf67c214d3aa690e4c104f18941",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ee9bc/0cf67c214d3aa690e4c104f18941"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/robot-sprzatajacy-roborock-s5-max-rnh",
+                "offers": {
+                    "price": "350",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 10,
+            "item": {
+                "name": "R12 Płytka sterująca Xiaomi Roborock S50 S55 s5",
+                "image": {
+                    "url": "https://allegro.pl/oferta/r12-plytka-sterujaca-xiaomi-roborock-s50-s55-s5-12737866494",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://allegro.pl/oferta/r12-plytka-sterujaca-xiaomi-roborock-s50-s55-s5-12737866494"
+                },
+                "url": "https://allegro.pl/oferta/r12-plytka-sterujaca-xiaomi-roborock-s50-s55-s5-12737866494",
+                "offers": {
+                    "price": "50",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 11,
+            "item": {
+                "name": "R8 Roborock S50 S55 S5 obudowa panelu sterującego",
+                "image": {
+                    "url": "https://allegro.pl/oferta/r8-roborock-s50-s55-s5-obudowa-panelu-sterujacego-12737544476",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://allegro.pl/oferta/r8-roborock-s50-s55-s5-obudowa-panelu-sterujacego-12737544476"
+                },
+                "url": "https://allegro.pl/oferta/r8-roborock-s50-s55-s5-obudowa-panelu-sterujacego-12737544476",
+                "offers": {
+                    "price": "50",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 12,
+            "item": {
+                "name": "R17 Org.czujnik magnetyczny do Roborock S50 S55 s5",
+                "image": {
+                    "url": "https://allegro.pl/oferta/r17-org-czujnik-magnetyczny-do-roborock-s50-s55-s5-12737976856",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://allegro.pl/oferta/r17-org-czujnik-magnetyczny-do-roborock-s50-s55-s5-12737976856"
+                },
+                "url": "https://allegro.pl/oferta/r17-org-czujnik-magnetyczny-do-roborock-s50-s55-s5-12737976856",
+                "offers": {
+                    "price": "30",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 13,
+            "item": {
+                "name": "R9 Roborock S50 S55 S5 górna budowa pokrywa",
+                "image": {
+                    "url": "https://allegro.pl/oferta/r9-roborock-s50-s55-s5-gorna-budowa-pokrywa-12737660578",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://allegro.pl/oferta/r9-roborock-s50-s55-s5-gorna-budowa-pokrywa-12737660578"
+                },
+                "url": "https://allegro.pl/oferta/r9-roborock-s50-s55-s5-gorna-budowa-pokrywa-12737660578",
+                "offers": {
+                    "price": "40",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 14,
+            "item": {
+                "name": "Kółko przednie podporowe Xiaomi Roborock S5 Max S6 Pure i inne CZYTAJ",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e101f/8ca25a8b49baac0fbfacd56a2ab3",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e101f/8ca25a8b49baac0fbfacd56a2ab3"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/kolko-przednie-podporowe-xiaomi-roborock-s5-max-s6-pure-i-inne-czytaj",
+                "offers": {
+                    "price": "32",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 15,
+            "item": {
+                "name": "Oryginalna bateria akumulator BRR-2P4S-5200S do Roborock S5/S6/S7/S8",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ec94d/214084c94de88d056bc5768fb1a3",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ec94d/214084c94de88d056bc5768fb1a3"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalna-bateria-akumulator-brr2p4s5200s-do-roborock-s5s6s7s8-kgr",
+                "offers": {
+                    "price": "69",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 16,
+            "item": {
+                "name": "Oryginalny silnik szczotki głównej Roborock SBM_V2 S5/S6",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e4d5c/6355126e42acb5abf418977929aa",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e4d5c/6355126e42acb5abf418977929aa"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalny-silnik-szczotki-glownej-roborock-sbmv2-s5s6-4q2",
+                "offers": {
+                    "price": "29",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 17,
+            "item": {
+                "name": "Rubys Compass Sensor Czujnik kompasu Xiaomi Roborock S5 MAX S5E02-00",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e857b/b8d15ebd4023a22d1528241c0a19",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e857b/b8d15ebd4023a22d1528241c0a19"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/rubys-compass-sensor-czujnik-kompasu-xiaomi-roborock-s5-max-s5e0200-v6i",
+                "offers": {
+                    "price": "39",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 18,
+            "item": {
+                "name": "Robot sprzątający Roborock S5 Max ",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e1324/dcc9049e4e53a1cfa91371877769",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e1324/dcc9049e4e53a1cfa91371877769"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/robot-sprzatajacy-roborock-s5-max-zgg",
+                "offers": {
+                    "price": "260",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 19,
+            "item": {
+                "name": "Czujnik LEWY klifu urwiska zderzaka bumper Xiaomi Roborock S5 MAX S6 Pure",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ebd16/e02d79d347a3bf87ebeef99a49d1",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ebd16/e02d79d347a3bf87ebeef99a49d1"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/czujnik-lewy-klifu-urwiska-zderzaka-bumper-xiaomi-roborock-s5-max-s6-pure",
+                "offers": {
+                    "price": "39.50",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 20,
+            "item": {
+                "name": "Czujnik dokowania ściany IR do Xiaomi Roborock S5E02-00 S5Max S50 S55 ",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ef3e9/fbeeb9bc45cd827fd99b98c09548",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ef3e9/fbeeb9bc45cd827fd99b98c09548"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/czujnik-dokowania-sciany-ir-do-xiaomi-roborock-s5e0200-s5max-s50-s55-7ww",
+                "offers": {
+                    "price": "45",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 21,
+            "item": {
+                "name": "Moduł szczotki bocznej do Xiaomi Roborock S5 MAX S50 S55 S60 S70 Q7",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e1736/ab3a93fa425b9f266291b26c5bfe",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e1736/ab3a93fa425b9f266291b26c5bfe"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/modul-szczotki-bocznej-do-xiaomi-roborock-s5-max-s50-s55-s60-s70-q7-qy6",
+                "offers": {
+                    "price": "45",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 22,
+            "item": {
+                "name": "Kabel wiązka lasera do robota Xiaomi Roborock S5 MAX S5E02 - 00",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e32d4/cc9763c346dc97f82e820d16f65b",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e32d4/cc9763c346dc97f82e820d16f65b"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/kabel-wiazka-lasera-do-robota-xiaomi-roborock-s5-max-s5e02-00-3bw",
+                "offers": {
+                    "price": "35",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 23,
+            "item": {
+                "name": "pojemnik na wodę płyn do mopowania Xiaomi Roborock S5 MAX",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e94e2/f02f1da44ed99e0ea446de6a272e",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e94e2/f02f1da44ed99e0ea446de6a272e"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/pojemnik-na-wode-plyn-do-mopowania-xiaomi-roborock-s5-max-wdv",
+                "offers": {
+                    "price": "64",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 24,
+            "item": {
+                "name": "Moduł turboszczotki szczotki głównej Xiaomi Roborock S5 Max S6 Pure czytaj",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e8e16/b721f96544a1b6d7df120273fb53",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e8e16/b721f96544a1b6d7df120273fb53"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/modul-turboszczotki-szczotki-glownej-xiaomi-roborock-s5-max-s6-pure-czytaj-76t",
+                "offers": {
+                    "price": "88",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 25,
+            "item": {
+                "name": "Pompa wody do mopowania do Xiaomi Roborock S5 MAX S5E02-00 S6 MaxV",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e9c45/3dc12560413fa50d6dcdabbe6c84",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e9c45/3dc12560413fa50d6dcdabbe6c84"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/pompa-wody-do-mopowania-do-xiaomi-roborock-s5-max-s5e0200-s6-maxv-g2q",
+                "offers": {
+                    "price": "77",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 26,
+            "item": {
+                "name": "Czujnik PRAWY klifu urwiska zderzaka bumper Xiaomi Roborock S5 MAX S6 Pure",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e783d/27c3ef3e476e978f76ddd976282b",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e783d/27c3ef3e476e978f76ddd976282b"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/czujnik-prawy-klifu-urwiska-zderzaka-bumper-xiaomi-roborock-s5-max-s6-pure-rt7",
+                "offers": {
+                    "price": "39.50",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 27,
+            "item": {
+                "name": "Robot sprzątający Roborock S5 Max biały",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e43de/6665a09e4f27bca85c86420aec00",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e43de/6665a09e4f27bca85c86420aec00"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/robot-sprzatajacy-roborock-s5-max-bialy-kgo",
+                "offers": {
+                    "price": "350",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 28,
+            "item": {
+                "name": "Moduł koło lewe do Xiaomi Roborock S5E02-00 S5Max S6Pure 6MaxV E4 S4Max",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1edfb2/65bc6815419a9b7da4d33978cfd1",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1edfb2/65bc6815419a9b7da4d33978cfd1"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/modul-kolo-lewe-do-xiaomi-roborock-s5e0200-s5max-s6pure-6maxv-e4-s4max",
+                "offers": {
+                    "price": "99",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 29,
+            "item": {
+                "name": "Moduł koło prawe do Xiaomi Roborock S5E02-00 S5Max S6Pure 6MaxV E4 S4Max",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ecb93/9f1d723244078cff9ae016f65729",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ecb93/9f1d723244078cff9ae016f65729"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/modul-kolo-prawe-do-xiaomi-roborock-s5e0200-s5max-s6pure-6maxv-e4-s4max-olb",
+                "offers": {
+                    "price": "99",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 30,
+            "item": {
+                "name": "Oryginalne Koło napędowe Roborock S5 lewe",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e2096/9f03b4eb479c92a14586d09311d2",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e2096/9f03b4eb479c92a14586d09311d2"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalne-kolo-napedowe-roborock-s5-lewe",
+                "offers": {
+                    "price": "19.99",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 31,
+            "item": {
+                "name": "Roborock S5 Max – używany - stan bardzo dobry",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e78c0/a12f86ac483ebbdc97a99e8f93ff",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e78c0/a12f86ac483ebbdc97a99e8f93ff"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/roborock-s5-max-uzywany-stan-bardzo-dobry",
+                "offers": {
+                    "price": "650",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 32,
+            "item": {
+                "name": "Czujnik tacki mopowania do Xiaomi Roborock S5 max",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ec21e/5827427f4fc7bf740f4dbe98ab41",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ec21e/5827427f4fc7bf740f4dbe98ab41"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/czujnik-tacki-mopowania-do-xiaomi-roborock-s5-max",
+                "offers": {
+                    "price": "77",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 33,
+            "item": {
+                "name": "Turbina ssąca do Xiaomi Roborock S5 MAX S5E02-00 S5E02",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e698e/fdd5a7a041f9ac31f13c4faafeae",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e698e/fdd5a7a041f9ac31f13c4faafeae"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/turbina-ssaca-do-xiaomi-roborock-s5-max-s5e0200-s5e02-jye",
+                "offers": {
+                    "price": "73",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 34,
+            "item": {
+                "name": "Oryginalny Wentylator wirnik do odkurzacza Roborock S50 S55 S5 Max turbina",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e670f/3cbdbb054dac8e3e396009ed2410",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e670f/3cbdbb054dac8e3e396009ed2410"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalny-wentylator-wirnik-do-odkurzacza-roborock-s50-s55-s5-max-turbina",
+                "offers": {
+                    "price": "100",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/NewCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 35,
+            "item": {
+                "name": "Laser LDS02RR nowy oryginalny do Roborock S7MaxV, S7 Pro Ultra, S5Max, S7+",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e687a/4882ce4b4e9ca7b447ea712161be",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e687a/4882ce4b4e9ca7b447ea712161be"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/laser-lds02rr-nowy-oryginalny-do-roborock-s7maxv-s7-pro-ultra-s5max-s7",
+                "offers": {
+                    "price": "190",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/NewCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 36,
+            "item": {
+                "name": "Zamienna bateria akumulator do Xiaomi Roborock S5 S6 S7 S8 S50 S55",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ec26e/51a8f7a54b94b9c371c0412ab5eb",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ec26e/51a8f7a54b94b9c371c0412ab5eb"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/zamienna-bateria-akumulator-do-xiaomi-roborock-s5-s6-s7-s8-s50-s55",
+                "offers": {
+                    "price": "69",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 37,
+            "item": {
+                "name": "Oryginalny Silnik ssący Turbina Roborock S4/S5/S6 2kPa 20N704P200",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ed292/2ce9444d44d598d3b955bc0ca639",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ed292/2ce9444d44d598d3b955bc0ca639"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalny-silnik-ssacy-turbina-roborock-s4s5s6-2kpa-20n704p200",
+                "offers": {
+                    "price": "24.99",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 38,
+            "item": {
+                "name": "Odkurzacz Roborock S5",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1eb0cb/2484c792497ebe30d482d5c35d48",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1eb0cb/2484c792497ebe30d482d5c35d48"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/odkurzacz-roborock-s5-zhw",
+                "offers": {
+                    "price": "500",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 39,
+            "item": {
+                "name": "Oryginalna bateria akumulator do Xiaomi Roborock S5 S6 S7 S8 S50 S55",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1eb83b/4bd0b6db49879fca89d1e38d15b6",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1eb83b/4bd0b6db49879fca89d1e38d15b6"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalna-bateria-akumulator-do-xiaomi-roborock-s5-s6-s7-s8-s50-s55",
+                "offers": {
+                    "price": "179",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 40,
+            "item": {
+                "name": "Robot sprzątający Xiaomi Roborock S5 max odkurza mopuje",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1eb679/0eea26e64af4b30c89d22dce6d4e",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1eb679/0eea26e64af4b30c89d22dce6d4e"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/robot-sprzatajacy-xiaomi-roborock-s5-max-odkurza-mopuje",
+                "offers": {
+                    "price": "450",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 41,
+            "item": {
+                "name": "Robot sprzątający Roborock S5 model: S502-00 biały",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ed2c6/d759b6e946f7ad38b753f02dfc48",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ed2c6/d759b6e946f7ad38b753f02dfc48"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/robot-sprzatajacy-roborock-s5-model-s50200-bialy",
+                "offers": {
+                    "price": "349",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 42,
+            "item": {
+                "name": "Robot sprzątający Roborock S5 MAX",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ee49d/97f742884d09b372d78172b00968",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ee49d/97f742884d09b372d78172b00968"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/robot-sprzatajacy-roborock-s5-max-r2n",
+                "offers": {
+                    "price": "400",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 43,
+            "item": {
+                "name": "Oryginalny pojemnik na kurz Roborock S5/S6 + Nowy filtr",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e57e5/240065bf4067b05b38effc1e3622",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e57e5/240065bf4067b05b38effc1e3622"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalny-pojemnik-na-kurz-roborock-s5-i-s6-4w6",
+                "offers": {
+                    "price": "29",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 44,
+            "item": {
+                "name": "Oryginalne Prawe Koło Napędowe - Roborock S5 S6 S7 Q7 max pure - Na Części",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e283c/c22f1b8c416d8398b96d3aa047ec",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e283c/c22f1b8c416d8398b96d3aa047ec"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalne-prawe-kolo-napedowe-roborock-s5-s6-s7-q7-max-pure-na-czesci-sx2",
+                "offers": {
+                    "price": "30",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/DamagedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 45,
+            "item": {
+                "name": "Oryginalny silnik szczotki bocznej Roborock E4/E5/S5/S6/S7/S8/Q5/Q7",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ea487/c9f9c38a4b93a79734be77daf3d0",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ea487/c9f9c38a4b93a79734be77daf3d0"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalny-silnik-szczotki-bocznej-roborock-s5s6s7-jpw",
+                "offers": {
+                    "price": "19.99",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 46,
+            "item": {
+                "name": "Roborock S5 Max – stan idealny! Gwarancja rozruchowa 24h",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e09cf/a9d194b94ab782426dd2e341c938",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e09cf/a9d194b94ab782426dd2e341c938"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/roborock-s5-max-stan-idealny-gwarancja-rozruchowa-24h",
+                "offers": {
+                    "price": "350",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 47,
+            "item": {
+                "name": "Szczotka główna do Xiaomi Roborock s5 max",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1eb8c1/09be302b46c2bb66c290f892d104",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1eb8c1/09be302b46c2bb66c290f892d104"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/szczotka-glowna-do-xiaomi-roborock-s5-max",
+                "offers": {
+                    "price": "30",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/NewCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 48,
+            "item": {
+                "name": "Filtry do Xiaomi Roborock s5 max",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e6f95/9fcd9fba4e0798c5dc6fc40fca48",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e6f95/9fcd9fba4e0798c5dc6fc40fca48"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/filtry-do-xiaomi-roborock-s5-max",
+                "offers": {
+                    "price": "30",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/NewCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 49,
+            "item": {
+                "name": "Lewe koło do Xiaomi Roborock s5 max",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e22e8/29548416423a95feece3ba3c3815",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e22e8/29548416423a95feece3ba3c3815"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/lewe-kolo-do-xiaomi-roborock-s5-max",
+                "offers": {
+                    "price": "100",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 50,
+            "item": {
+                "name": "Szczotki boczne do Xiaomi Roborock s5 max",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e0a3c/07299b4e4edfbd522560d47ff933",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e0a3c/07299b4e4edfbd522560d47ff933"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/szczotki-boczne-do-xiaomi-roborock-s5-max",
+                "offers": {
+                    "price": "25",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 51,
+            "item": {
+                "name": "Roborock S5 Max – robot sprzątający z mopowaniem",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1e6caa/9c8c26cd4c46b9373aee4876e835",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1e6caa/9c8c26cd4c46b9373aee4876e835"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/roborock-s5-max-robot-sprzatajacy-z-mopowaniem",
+                "offers": {
+                    "price": "249",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 52,
+            "item": {
+                "name": "Oryginalna szczotka Brush Roborock S5 max S6 max S7 Pro S7 MaxV ultra",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ef1f1/f555562d456a9ac5e146748a0558",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ef1f1/f555562d456a9ac5e146748a0558"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/oryginalna-szczotka-brush-roborock-s5-max-s6-max-s7-pro-s7-maxv-ultra",
+                "offers": {
+                    "price": "25",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/NewCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 53,
+            "item": {
+                "name": "Odkurzacz ROBOROCK S5 MAX",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1ee53a/1f5176c940699909ec63579574ed",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1ee53a/1f5176c940699909ec63579574ed"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/odkurzacz-roborock-s5-max-a7n",
+                "offers": {
+                    "price": "550",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        },
+        {
+            "position": 54,
+            "item": {
+                "name": "Robot sprzątający roborock s5 max",
+                "image": {
+                    "url": "https://a.allegroimg.com/original/1efbc0/b2cea21c431faacbf43193960dda",
+                    "@type": "ImageObject",
+                    "contentUrl": "https://a.allegroimg.com/original/1efbc0/b2cea21c431faacbf43193960dda"
+                },
+                "url": "https://allegrolokalnie.pl/oferta/robot-sprzatajacy-roborock-s5-max-7mb",
+                "offers": {
+                    "price": "700",
+                    "@type": "Offer",
+                    "priceCurrency": "PLN"
+                },
+                "@type": "Product",
+                "itemCondition": "https://schema.org/UsedCondition"
+            },
+            "@type": "ListItem"
+        }
+    ]
+}

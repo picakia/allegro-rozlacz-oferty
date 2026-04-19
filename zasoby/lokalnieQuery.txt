@@ -1,0 +1,22 @@
+Podstawowe query (zrodlo JEST WYMAGANE inaczej są duplikaty) - https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie
+Lokalizacja - https://allegrolokalnie.pl/oferty/q/dreame/lodz?zrodlo=lokalnie
+Smart - https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie&dostawa_smart=1
+Typy:
+- https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie&typ=kup-teraz
+- https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie&typ=ogloszenie
+- https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie&typ=licytacja
+(wiele) https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie&typ=ogloszenie&typ=licytacja
+Cena - https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie&price_from=10&price_to=200
+Sortowanie:
+- https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie&sort=startingTime-desc
+- https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie&sort=price-asc
+- https://allegrolokalnie.pl/oferty/q/dreame?zrodlo=lokalnie&sort=price-desc
+
+Więcej filtrów nie stosujemy.
+
+Kategoria (NIE DO ZROBIENIA, IGNORUJEMY):
+poziom 1 - https://allegrolokalnie.pl/oferty/elektronika/q/dreame?zrodlo=lokalnie
+poziom 2 - https://allegrolokalnie.pl/oferty/elektronika/rtv-i-agd-10/q/dreame?zrodlo=lokalnie
+poziom 3 - https://allegrolokalnie.pl/oferty/rtv-i-agd/agd-drobne-67414/q/dreame?zrodlo=lokalnie
+poziom 4 - https://allegrolokalnie.pl/oferty/agd-drobne/do-domu-67416/q/dreame?zrodlo=lokalnie
+poziom 5 - https://allegrolokalnie.pl/oferty/do-domu/odkurzacze-67466/q/dreame?zrodlo=lokalnie
