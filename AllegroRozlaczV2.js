@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2026-04-20_00-58
+// @version      2026-04-20_17-36
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -71,9 +71,16 @@ const gmFetch = url =>
 const buildLokalnieURL = mainURL => {
   const keyword = mainURL.searchParams.get("string");
   if (!keyword) return null;
-  const lokalnieURL = new URL(
-    `https://allegrolokalnie.pl/oferty/q/${encodeURIComponent(keyword)}`,
-  );
+
+  // Extract category from /kategoria/.../slug-12345 path
+  const pathSegments = mainURL.pathname.replace(/^\/kategoria\//, "").split("/");
+  const lastSegment = pathSegments[pathSegments.length - 1];
+  const hasCategory = /\d+$/.test(lastSegment);
+
+  const basePath = hasCategory
+    ? `https://allegrolokalnie.pl/oferty/${lastSegment}/q/${encodeURIComponent(keyword)}`
+    : `https://allegrolokalnie.pl/oferty/q/${encodeURIComponent(keyword)}`;
+  const lokalnieURL = new URL(basePath);
   lokalnieURL.searchParams.set("zrodlo", "lokalnie");
 
   // Mapping: allegro order -> lokalnie sort
@@ -104,8 +111,18 @@ const buildLokalnieURL = mainURL => {
 const parseLokalnieHTML = html => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
+
+  // Pagination
+  const paginationEl = doc.querySelector("[data-mlc-listing-bottom-pagination]");
+  let pagesCount = 1;
+  if (paginationEl) {
+    try {
+      const paginationData = JSON.parse(paginationEl.getAttribute("data-mlc-listing-bottom-pagination"));
+      pagesCount = paginationData.pages_count || 1;
+    } catch (e) {}
+  }
   const articles = doc.querySelectorAll("article.mlc-itembox__container");
-  return Array.from(articles).map(article => {
+  const items = Array.from(articles).map(article => {
     const link = article.querySelector("a.mlc-card[itemprop='url']");
     const href = link?.getAttribute("href") || "";
     const img = article.querySelector("img[itemprop='image']");
@@ -175,6 +192,7 @@ const parseLokalnieHTML = html => {
       popularityLabel,
     };
   });
+  return { items, pagesCount };
 };
 
 const generateLokalnieProduct = item => {
@@ -488,13 +506,27 @@ const restore = async () => {
   console.log(DOM.progressBar.text.innerText);
   await new Promise(r => setTimeout(r, 1));
   const lokalnieURL = buildLokalnieURL(mainURL);
+  console.log(`Lokalnie URL: ${lokalnieURL}`);
   if (lokalnieURL) {
     try {
       const lokalnieHTML = await gmFetch(lokalnieURL);
-      const lokalnieItems = parseLokalnieHTML(lokalnieHTML);
-      console.log(`Allegro Lokalnie: found ${lokalnieItems.length} offers`);
+      const { items: lokalnieItems, pagesCount: lokalniePages } = parseLokalnieHTML(lokalnieHTML);
+      console.log(`Allegro Lokalnie: found ${lokalnieItems.length} offers on page 1/${lokalniePages}`);
       for (const item of lokalnieItems) {
         articleList.push(generateLokalnieProduct(item));
+      }
+      for (let lp = 2; lp <= lokalniePages; lp++) {
+        DOM.progressBar.text.innerText = `Fetching Allegro Lokalnie page ${lp}/${lokalniePages}...`;
+        console.log(DOM.progressBar.text.innerText);
+        const pageURL = new URL(lokalnieURL);
+        pageURL.searchParams.set("page", lp);
+        console.log(`Lokalnie URL page ${lp}: ${pageURL}`);
+        const nextHTML = await gmFetch(pageURL.href);
+        const { items: nextItems } = parseLokalnieHTML(nextHTML);
+        console.log(`Allegro Lokalnie: found ${nextItems.length} offers on page ${lp}/${lokalniePages}`);
+        for (const item of nextItems) {
+          articleList.push(generateLokalnieProduct(item));
+        }
       }
     } catch (err) {
       console.error("Failed to fetch Allegro Lokalnie", err);
