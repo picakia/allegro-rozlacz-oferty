@@ -1,393 +1,393 @@
 {
-    "type": "buyNow",
-    "badges": {
-        "installments": {
-            "labels": [
-                {
-                    "labelParts": [
-                        {
-                            "text": "191,87 zł",
-                            "style": {
-                                "themes": {
-                                    "light": {
-                                        "textColor": "text.secondary"
-                                    },
-                                    "dark": {
-                                        "textColor": "text.secondary"
-                                    }
-                                },
-                                "textAttributes": {
-                                    "bold": true,
-                                    "strikethrough": false
-                                }
-                            }
-                        },
-                        {
-                            "text": " x 5 rat",
-                            "style": {
-                                "themes": {
-                                    "light": {
-                                        "textColor": "text.secondary"
-                                    },
-                                    "dark": {
-                                        "textColor": "text.secondary"
-                                    }
-                                },
-                                "textAttributes": {
-                                    "bold": false,
-                                    "strikethrough": false
-                                }
-                            }
-                        }
-                    ]
+  "type": "buyNow",
+  "badges": {
+    "installments": {
+      "labels": [
+        {
+          "labelParts": [
+            {
+              "text": "191,87 zł",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "text.secondary"
+                  },
+                  "dark": {
+                    "textColor": "text.secondary"
+                  }
                 },
-                {
-                    "labelParts": [
-                        {
-                            "text": "z"
-                        }
-                    ],
-                    "style": {
-                        "themes": {
-                            "light": {
-                                "textColor": "text.secondary"
-                            },
-                            "dark": {
-                                "textColor": "text.secondary"
-                            }
-                        },
-                        "textAttributes": {
-                            "bold": false,
-                            "strikethrough": false
-                        },
-                        "badge": false
-                    }
-                },
-                {
-                    "labelParts": [
-                        {
-                            "icon": {
-                                "id": "ALLEGRO_PAY_BADGE",
-                                "alt": "Allegro Pay",
-                                "sources": {
-                                    "svg": {
-                                        "url": "https://a.allegroimg.com/original/1289e0/d44ff4a74fe8b73e619f76c756e8",
-                                        "darkModeUrl": "https://a.allegroimg.com/original/1289e0/d44ff4a74fe8b73e619f76c756e8"
-                                    },
-                                    "png": {
-                                        "url": "https://a.allegroimg.com/original/1221bc/f8a6496742d9a66d854eb11635c2",
-                                        "darkModeUrl": "https://a.allegroimg.com/original/1221bc/f8a6496742d9a66d854eb11635c2"
-                                    }
-                                }
-                            }
-                        }
-                    ],
-                    "style": {
-                        "themes": {
-                            "light": {},
-                            "dark": {}
-                        },
-                        "badge": false
-                    }
-                },
-                {
-                    "labelParts": [
-                        {
-                            "text": "sprawdź",
-                            "style": {
-                                "themes": {
-                                    "light": {
-                                        "textColor": "text.secondary"
-                                    },
-                                    "dark": {
-                                        "textColor": "text.secondary"
-                                    }
-                                },
-                                "textAttributes": {
-                                    "bold": false,
-                                    "strikethrough": false
-                                }
-                            }
-                        }
-                    ]
+                "textAttributes": {
+                  "bold": true,
+                  "strikethrough": false
                 }
-            ]
-        },
-        "logistics": {
-            "labels": [
-                {
-                    "labelParts": [
-                        {
-                            "text": "dostawa we wtorek",
-                            "style": {
-                                "themes": {
-                                    "light": {
-                                        "textColor": "#107B1E"
-                                    },
-                                    "dark": {
-                                        "textColor": "#43C649"
-                                    }
-                                },
-                                "textAttributes": {
-                                    "bold": true,
-                                    "strikethrough": false
-                                }
-                            }
-                        },
-                        {
-                            "icon": {
-                                "alt": "Informacja",
-                                "sources": {
-                                    "svg": {
-                                        "url": "https://a.allegroimg.com/original/12d15a/73be8cae4746a6108490b55c755a",
-                                        "darkModeUrl": "https://a.allegroimg.com/original/124f71/b31763b24302b881110844ad9f8f"
-                                    },
-                                    "png": {
-                                        "url": "https://a.allegroimg.com/original/124286/6d082da74c21926b613c07eb4ea2",
-                                        "darkModeUrl": "https://a.allegroimg.com/original/129d30/2624da764f3a8e6fd1ef522c63fd"
-                                    }
-                                }
-                            },
-                            "contextInfo": {
-                                "text": "Przewidywany przez Allegro czas dostawy na podstawie wcześniejszych dostaw sprzedającego."
-                            }
-                        }
-                    ]
+              }
+            },
+            {
+              "text": " x 5 rat",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "text.secondary"
+                  },
+                  "dark": {
+                    "textColor": "text.secondary"
+                  }
+                },
+                "textAttributes": {
+                  "bold": false,
+                  "strikethrough": false
                 }
-            ]
-        }
-    },
-    "navigationCategory": {
-        "id": "256019",
-        "tree": "navigation-pl"
-    },
-    "assortmentCategory": {
-        "id": "256019",
-        "path": [
-            {
-                "id": "42540aec-367a-4e5e-b411-17c09b08e41f"
-            },
-            {
-                "id": "10"
-            },
-            {
-                "id": "67414"
-            },
-            {
-                "id": "67416"
-            },
-            {
-                "id": "67466"
-            },
-            {
-                "id": "256019"
+              }
             }
-        ]
-    },
-    "freebox": {
-        "id": "FREEBOX",
-        "alt": "Smart!",
-        "labels": [
-            {
-                "labelParts": [
-                    {
-                        "text": "Smart!",
-                        "icon": {
-                            "id": "FREEBOX_NOMARGIN",
-                            "alt": "Smart!",
-                            "sources": {
-                                "svg": {
-                                    "url": "https://a.allegroimg.com/original/343b4d/ed3f5c04412ab7bd70dd0a34f0cd/brand-subbrand-smart-d8bfa93f10.svg",
-                                    "darkModeUrl": "https://a.allegroimg.com/original/34611c/c433ab0c4bf9a76e4f1f15b5dd1f/dark-brand-subbrand-smart-2ecf1fa38c.svg"
-                                },
-                                "png": {
-                                    "url": "https://assets.allegrostatic.com/freebox/icons/FREEBOX_NOMARGIN_V2.png",
-                                    "darkModeUrl": "https://assets.allegrostatic.com/freebox/icons/FREEBOX_NOMARGIN_V2_DARK.png"
-                                }
-                            }
-                        }
-                    }
-                ]
-            }
-        ]
-    },
-    "id": "15926950625",
-    "itemContext": "FEATURED",
-    "name": "Robot sprzątający Roborock S5 MAX czarny",
-    "openInNewTab": false,
-    "parameters": [
-        {
-            "name": "Stan",
-            "values": [
-                "Używany"
-            ],
-            "highlight": false
+          ]
         },
         {
-            "name": "Gwarancja",
-            "values": [
-                "12 miesięcy"
-            ],
-            "highlight": false
-        }
-    ],
-    "promotion": {
-        "emphasized": false,
-        "bold": false,
-        "highlight": false
-    },
-    "seller": {
-        "id": "12304006",
-        "title": "Firma",
-        "superSeller": true,
-        "login": "mixhandelpl",
-        "userListingUrl": "https://allegro.pl/uzytkownik/mixhandelpl",
-        "positiveFeedbackPercent": 99.3,
-        "positiveFeedbackCount": 141,
-        "positiveFeedbackIcon": false,
-        "company": true
-    },
-    "sellingMode": {
-        "buyNow": {
-            "price": {
-                "amount": "900.00",
-                "currency": "PLN"
+          "labelParts": [
+            {
+              "text": "z"
+            }
+          ],
+          "style": {
+            "themes": {
+              "light": {
+                "textColor": "text.secondary"
+              },
+              "dark": {
+                "textColor": "text.secondary"
+              }
             },
-            "popularity": 0,
-            "cartAvailable": true,
-            "additionalAddToCartButton": true
-        },
-        "isBestPriceGuarantee": false
-    },
-    "shipping": {
-        "freeDelivery": false,
-        "freeReturn": false,
-        "lowest": {
-            "amount": "14.00",
-            "currency": "PLN"
-        },
-        "itemWithDelivery": {
-            "amount": "914.00",
-            "currency": "PLN"
-        },
-        "shipmentCountryLabel": []
-    },
-    "photos": [
-        {
-            "small": "https://a.allegroimg.com/s64/11ddb0/ccec148a4cf3a2bdd18f03052c56/Robot-sprzatajacy-Roborock-S5-MAX-czarny",
-            "medium": "https://a.allegroimg.com/s360/11ddb0/ccec148a4cf3a2bdd18f03052c56/Robot-sprzatajacy-Roborock-S5-MAX-czarny"
+            "textAttributes": {
+              "bold": false,
+              "strikethrough": false
+            },
+            "badge": false
+          }
         },
         {
-            "small": "https://a.allegroimg.com/s64/1192a1/1a7c355e433cba5d85fa0472e050/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Marka-Roborock",
-            "medium": "https://a.allegroimg.com/s360/1192a1/1a7c355e433cba5d85fa0472e050/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Marka-Roborock"
-        },
-        {
-            "small": "https://a.allegroimg.com/s64/117564/1c2f88a9495f912d99cc36b5f316/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Zawiera-baterie-tak",
-            "medium": "https://a.allegroimg.com/s360/117564/1c2f88a9495f912d99cc36b5f316/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Zawiera-baterie-tak"
-        },
-        {
-            "small": "https://a.allegroimg.com/s64/112f49/adc512754fc69245fe3b20ee6ac7/Robot-sprzatajacy-Roborock-S5-MAX-czarny-EAN-GTIN-6970995781939",
-            "medium": "https://a.allegroimg.com/s360/112f49/adc512754fc69245fe3b20ee6ac7/Robot-sprzatajacy-Roborock-S5-MAX-czarny-EAN-GTIN-6970995781939"
-        },
-        {
-            "small": "https://a.allegroimg.com/s64/119d7c/358d493e4053888395733738f6e2/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Stan-opakowania-oryginalne",
-            "medium": "https://a.allegroimg.com/s360/119d7c/358d493e4053888395733738f6e2/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Stan-opakowania-oryginalne"
-        },
-        {
-            "small": "https://a.allegroimg.com/s64/11a39a/91a6270144eb8940f720973bb374/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Kod-producenta-R0518S00071",
-            "medium": "https://a.allegroimg.com/s360/11a39a/91a6270144eb8940f720973bb374/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Kod-producenta-R0518S00071"
-        },
-        {
-            "small": "https://a.allegroimg.com/s64/11a11a/d2759b0b462ca03b2e5c7407b727/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Model-S5-MAX",
-            "medium": "https://a.allegroimg.com/s360/11a11a/d2759b0b462ca03b2e5c7407b727/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Model-S5-MAX"
-        },
-        {
-            "small": "https://a.allegroimg.com/s64/111bcc/5edb2f5c477da6254937bd69dc87/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Kolor-dominujacy-czarny",
-            "medium": "https://a.allegroimg.com/s360/111bcc/5edb2f5c477da6254937bd69dc87/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Kolor-dominujacy-czarny"
-        },
-        {
-            "small": "https://a.allegroimg.com/s64/113e3c/ec6783ff4dd6aea8ebb78843e07a/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Czas-pracy-bezprzewodowej-180-min",
-            "medium": "https://a.allegroimg.com/s360/113e3c/ec6783ff4dd6aea8ebb78843e07a/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Czas-pracy-bezprzewodowej-180-min"
-        },
-        {
-            "small": "https://a.allegroimg.com/s64/110ba8/38a837544989bd490ecefc2b85eb/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Moc-58-W",
-            "medium": "https://a.allegroimg.com/s360/110ba8/38a837544989bd490ecefc2b85eb/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Moc-58-W"
-        }
-    ],
-    "productReview": {
-        "rating": {
-            "average": "4.92",
-            "count": 1335
-        }
-    },
-    "seo": {
-        "nofollow": false
-    },
-    "mainThumbnail": "https://a.allegroimg.com/s180/11ddb0/ccec148a4cf3a2bdd18f03052c56/Robot-sprzatajacy-Roborock-S5-MAX-czarny",
-    "mainThumbnailSizes": {
-        "large": {
-            "url": "https://a.allegroimg.com/s720/11ddb0/ccec148a4cf3a2bdd18f03052c56/Robot-sprzatajacy-Roborock-S5-MAX-czarny"
-        }
-    },
-    "url": "https://allegro.pl/produkt/robot-sprzatajacy-roborock-s5-max-czarny-52304757-ccc4-4cff-9c0e-4324004ee8d3?offerId=15926950625",
-    "quantity": {
-        "unitType": "UNIT",
-        "value": 1
-    },
-    "vendor": "allegro",
-    "labels": {
-        "regularLabel": null
-    },
-    "analytics": {
-        "itemView": [
+          "labelParts": [
             {
-                "name": "deliverylabel",
-                "value": "dostawa we wtorek Informacja"
+              "icon": {
+                "id": "ALLEGRO_PAY_BADGE",
+                "alt": "Allegro Pay",
+                "sources": {
+                  "svg": {
+                    "url": "https://a.allegroimg.com/original/1289e0/d44ff4a74fe8b73e619f76c756e8",
+                    "darkModeUrl": "https://a.allegroimg.com/original/1289e0/d44ff4a74fe8b73e619f76c756e8"
+                  },
+                  "png": {
+                    "url": "https://a.allegroimg.com/original/1221bc/f8a6496742d9a66d854eb11635c2",
+                    "darkModeUrl": "https://a.allegroimg.com/original/1221bc/f8a6496742d9a66d854eb11635c2"
+                  }
+                }
+              }
             }
-        ]
-    },
-    "featured": true,
-    "generalParameters": [
-        {
-            "name": "Stan",
-            "values": [
-                "Używany"
-            ],
-            "highlight": false
+          ],
+          "style": {
+            "themes": {
+              "light": {},
+              "dark": {}
+            },
+            "badge": false
+          }
         },
         {
-            "name": "Gwarancja",
-            "values": [
-                "12 miesięcy"
-            ],
-            "highlight": false
+          "labelParts": [
+            {
+              "text": "sprawdź",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "text.secondary"
+                  },
+                  "dark": {
+                    "textColor": "text.secondary"
+                  }
+                },
+                "textAttributes": {
+                  "bold": false,
+                  "strikethrough": false
+                }
+              }
+            }
+          ]
         }
-    ],
-    "productRepresentativeParameters": [],
-    "productDetails": {
-        "productId": "52304757-ccc4-4cff-9c0e-4324004ee8d3",
-        "productName": "Robot sprzątający Roborock S5 MAX czarny",
-        "representativeOfferId": "15926950625",
-        "variantsDetails": null
+      ]
     },
-    "offerId": "15926950625",
-    "productizationLinks": {
-        "seoLink": null,
-        "productPage": null,
-        "recommerceProductPage": null
+    "logistics": {
+      "labels": [
+        {
+          "labelParts": [
+            {
+              "text": "dostawa we wtorek",
+              "style": {
+                "themes": {
+                  "light": {
+                    "textColor": "#107B1E"
+                  },
+                  "dark": {
+                    "textColor": "#43C649"
+                  }
+                },
+                "textAttributes": {
+                  "bold": true,
+                  "strikethrough": false
+                }
+              }
+            },
+            {
+              "icon": {
+                "alt": "Informacja",
+                "sources": {
+                  "svg": {
+                    "url": "https://a.allegroimg.com/original/12d15a/73be8cae4746a6108490b55c755a",
+                    "darkModeUrl": "https://a.allegroimg.com/original/124f71/b31763b24302b881110844ad9f8f"
+                  },
+                  "png": {
+                    "url": "https://a.allegroimg.com/original/124286/6d082da74c21926b613c07eb4ea2",
+                    "darkModeUrl": "https://a.allegroimg.com/original/129d30/2624da764f3a8e6fd1ef522c63fd"
+                  }
+                }
+              },
+              "contextInfo": {
+                "text": "Przewidywany przez Allegro czas dostawy na podstawie wcześniejszych dostaw sprzedającego."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "navigationCategory": {
+    "id": "256019",
+    "tree": "navigation-pl"
+  },
+  "assortmentCategory": {
+    "id": "256019",
+    "path": [
+      {
+        "id": "42540aec-367a-4e5e-b411-17c09b08e41f"
+      },
+      {
+        "id": "10"
+      },
+      {
+        "id": "67414"
+      },
+      {
+        "id": "67416"
+      },
+      {
+        "id": "67466"
+      },
+      {
+        "id": "256019"
+      }
+    ]
+  },
+  "freebox": {
+    "id": "FREEBOX",
+    "alt": "Smart!",
+    "labels": [
+      {
+        "labelParts": [
+          {
+            "text": "Smart!",
+            "icon": {
+              "id": "FREEBOX_NOMARGIN",
+              "alt": "Smart!",
+              "sources": {
+                "svg": {
+                  "url": "https://a.allegroimg.com/original/343b4d/ed3f5c04412ab7bd70dd0a34f0cd/brand-subbrand-smart-d8bfa93f10.svg",
+                  "darkModeUrl": "https://a.allegroimg.com/original/34611c/c433ab0c4bf9a76e4f1f15b5dd1f/dark-brand-subbrand-smart-2ecf1fa38c.svg"
+                },
+                "png": {
+                  "url": "https://assets.allegrostatic.com/freebox/icons/FREEBOX_NOMARGIN_V2.png",
+                  "darkModeUrl": "https://assets.allegrostatic.com/freebox/icons/FREEBOX_NOMARGIN_V2_DARK.png"
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "id": "15926950625",
+  "itemContext": "FEATURED",
+  "name": "Robot sprzątający Roborock S5 MAX czarny",
+  "openInNewTab": false,
+  "parameters": [
+    {
+      "name": "Stan",
+      "values": [
+        "Używany"
+      ],
+      "highlight": false
     },
-    "hasInfoBox": true,
-    "tireInfo": {
-        "labels": [],
-        "keyParameters": []
+    {
+      "name": "Gwarancja",
+      "values": [
+        "12 miesięcy"
+      ],
+      "highlight": false
+    }
+  ],
+  "promotion": {
+    "emphasized": false,
+    "bold": false,
+    "highlight": false
+  },
+  "seller": {
+    "id": "12304006",
+    "title": "Firma",
+    "superSeller": true,
+    "login": "mixhandelpl",
+    "userListingUrl": "https://allegro.pl/uzytkownik/mixhandelpl",
+    "positiveFeedbackPercent": 99.3,
+    "positiveFeedbackCount": 141,
+    "positiveFeedbackIcon": false,
+    "company": true
+  },
+  "sellingMode": {
+    "buyNow": {
+      "price": {
+        "amount": "900.00",
+        "currency": "PLN"
+      },
+      "popularity": 0,
+      "cartAvailable": true,
+      "additionalAddToCartButton": true
     },
-    "eventData": {
-        "offer_id": "15926950625",
-        "product_id": "52304757-ccc4-4cff-9c0e-4324004ee8d3",
-        "search_id": "789c0ade-f608-4020-a9d4-17c504c11466"
+    "isBestPriceGuarantee": false
+  },
+  "shipping": {
+    "freeDelivery": false,
+    "freeReturn": false,
+    "lowest": {
+      "amount": "14.00",
+      "currency": "PLN"
     },
-    "compatibleModel": [],
-    "sponsored": false,
-    "product": false,
-    "promoted": false
+    "itemWithDelivery": {
+      "amount": "914.00",
+      "currency": "PLN"
+    },
+    "shipmentCountryLabel": []
+  },
+  "photos": [
+    {
+      "small": "https://a.allegroimg.com/s64/11ddb0/ccec148a4cf3a2bdd18f03052c56/Robot-sprzatajacy-Roborock-S5-MAX-czarny",
+      "medium": "https://a.allegroimg.com/s360/11ddb0/ccec148a4cf3a2bdd18f03052c56/Robot-sprzatajacy-Roborock-S5-MAX-czarny"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/1192a1/1a7c355e433cba5d85fa0472e050/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Marka-Roborock",
+      "medium": "https://a.allegroimg.com/s360/1192a1/1a7c355e433cba5d85fa0472e050/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Marka-Roborock"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/117564/1c2f88a9495f912d99cc36b5f316/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Zawiera-baterie-tak",
+      "medium": "https://a.allegroimg.com/s360/117564/1c2f88a9495f912d99cc36b5f316/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Zawiera-baterie-tak"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/112f49/adc512754fc69245fe3b20ee6ac7/Robot-sprzatajacy-Roborock-S5-MAX-czarny-EAN-GTIN-6970995781939",
+      "medium": "https://a.allegroimg.com/s360/112f49/adc512754fc69245fe3b20ee6ac7/Robot-sprzatajacy-Roborock-S5-MAX-czarny-EAN-GTIN-6970995781939"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/119d7c/358d493e4053888395733738f6e2/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Stan-opakowania-oryginalne",
+      "medium": "https://a.allegroimg.com/s360/119d7c/358d493e4053888395733738f6e2/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Stan-opakowania-oryginalne"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11a39a/91a6270144eb8940f720973bb374/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Kod-producenta-R0518S00071",
+      "medium": "https://a.allegroimg.com/s360/11a39a/91a6270144eb8940f720973bb374/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Kod-producenta-R0518S00071"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/11a11a/d2759b0b462ca03b2e5c7407b727/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Model-S5-MAX",
+      "medium": "https://a.allegroimg.com/s360/11a11a/d2759b0b462ca03b2e5c7407b727/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Model-S5-MAX"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/111bcc/5edb2f5c477da6254937bd69dc87/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Kolor-dominujacy-czarny",
+      "medium": "https://a.allegroimg.com/s360/111bcc/5edb2f5c477da6254937bd69dc87/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Kolor-dominujacy-czarny"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/113e3c/ec6783ff4dd6aea8ebb78843e07a/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Czas-pracy-bezprzewodowej-180-min",
+      "medium": "https://a.allegroimg.com/s360/113e3c/ec6783ff4dd6aea8ebb78843e07a/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Czas-pracy-bezprzewodowej-180-min"
+    },
+    {
+      "small": "https://a.allegroimg.com/s64/110ba8/38a837544989bd490ecefc2b85eb/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Moc-58-W",
+      "medium": "https://a.allegroimg.com/s360/110ba8/38a837544989bd490ecefc2b85eb/Robot-sprzatajacy-Roborock-S5-MAX-czarny-Moc-58-W"
+    }
+  ],
+  "productReview": {
+    "rating": {
+      "average": "4.92",
+      "count": 1335
+    }
+  },
+  "seo": {
+    "nofollow": false
+  },
+  "mainThumbnail": "https://a.allegroimg.com/s180/11ddb0/ccec148a4cf3a2bdd18f03052c56/Robot-sprzatajacy-Roborock-S5-MAX-czarny",
+  "mainThumbnailSizes": {
+    "large": {
+      "url": "https://a.allegroimg.com/s720/11ddb0/ccec148a4cf3a2bdd18f03052c56/Robot-sprzatajacy-Roborock-S5-MAX-czarny"
+    }
+  },
+  "url": "https://allegro.pl/produkt/robot-sprzatajacy-roborock-s5-max-czarny-52304757-ccc4-4cff-9c0e-4324004ee8d3?offerId=15926950625",
+  "quantity": {
+    "unitType": "UNIT",
+    "value": 1
+  },
+  "vendor": "allegro",
+  "labels": {
+    "regularLabel": null
+  },
+  "analytics": {
+    "itemView": [
+      {
+        "name": "deliverylabel",
+        "value": "dostawa we wtorek Informacja"
+      }
+    ]
+  },
+  "featured": true,
+  "generalParameters": [
+    {
+      "name": "Stan",
+      "values": [
+        "Używany"
+      ],
+      "highlight": false
+    },
+    {
+      "name": "Gwarancja",
+      "values": [
+        "12 miesięcy"
+      ],
+      "highlight": false
+    }
+  ],
+  "productRepresentativeParameters": [],
+  "productDetails": {
+    "productId": "52304757-ccc4-4cff-9c0e-4324004ee8d3",
+    "productName": "Robot sprzątający Roborock S5 MAX czarny",
+    "representativeOfferId": "15926950625",
+    "variantsDetails": null
+  },
+  "offerId": "15926950625",
+  "productizationLinks": {
+    "seoLink": null,
+    "productPage": null,
+    "recommerceProductPage": null
+  },
+  "hasInfoBox": true,
+  "tireInfo": {
+    "labels": [],
+    "keyParameters": []
+  },
+  "eventData": {
+    "offer_id": "15926950625",
+    "product_id": "52304757-ccc4-4cff-9c0e-4324004ee8d3",
+    "search_id": "789c0ade-f608-4020-a9d4-17c504c11466"
+  },
+  "compatibleModel": [],
+  "sponsored": false,
+  "product": false,
+  "promoted": false
 }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2026-04-20_17-36
+// @version      2026-05-14_17-26
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -15,8 +15,102 @@
 const fastMode = false;
 // enable to show only offers that have your keywords in the title
 const cleanOffers = false;
+// enable to persist blacklist across page reloads (localStorage), false = reset on reload
+const persistBlacklist = true;
+// enable to filter blacklisted offers BEFORE fetching nested pages (saves requests)
+const earlyBlacklist = true;
 
 let articleList = [];
+
+// Blacklist management
+const BLACKLIST_KEY = "allegro_rozlacz_blacklist";
+const BLACKLIST_ENABLED_KEY = "allegro_rozlacz_blacklist_enabled";
+let _sessionBlacklist = [];
+let _sessionBlacklistEnabled = true;
+const getBlacklist = () => persistBlacklist ? JSON.parse(localStorage.getItem(BLACKLIST_KEY) || "[]") : _sessionBlacklist;
+const saveBlacklist = list => { if (persistBlacklist) localStorage.setItem(BLACKLIST_KEY, JSON.stringify(list)); else _sessionBlacklist = list; };
+const isBlacklistEnabled = () => persistBlacklist ? localStorage.getItem(BLACKLIST_ENABLED_KEY) !== "false" : _sessionBlacklistEnabled;
+const setBlacklistEnabled = val => { if (persistBlacklist) localStorage.setItem(BLACKLIST_ENABLED_KEY, val ? "true" : "false"); else _sessionBlacklistEnabled = val; };
+
+const openBlacklistPopup = () => {
+  if (document.getElementById("blacklistPopup")) return;
+  const overlay = document.createElement("div");
+  overlay.id = "blacklistPopup";
+  overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;";
+  const popup = document.createElement("div");
+  popup.style.cssText = "background:#222;color:#fff;border-radius:12px;padding:24px;min-width:360px;max-width:500px;max-height:80vh;display:flex;flex-direction:column;font-family:Open Sans,sans-serif;";
+  popup.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h3 style="margin:0;font-size:1.1rem;">Blacklista fraz</h3>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+        <span style="font-size:13px;color:#aaa;" id="blacklistToggleLabel">${isBlacklistEnabled() ? "Włączona" : "Wyłączona"}</span>
+        <div style="position:relative;width:40px;height:22px;">
+          <input id="blacklistToggle" type="checkbox" ${isBlacklistEnabled() ? "checked" : ""} style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;z-index:1;" />
+          <div id="blacklistToggleTrack" style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:11px;background:${isBlacklistEnabled() ? "#2ab9a3" : "#555"};transition:background .2s;"></div>
+          <div id="blacklistToggleThumb" style="position:absolute;top:2px;left:${isBlacklistEnabled() ? "20px" : "2px"};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;"></div>
+        </div>
+      </label>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <input id="blacklistInput" type="text" placeholder="Wpisz frazę do zablokowania..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #555;background:#333;color:#fff;font-size:14px;" />
+      <button id="blacklistAdd" style="padding:8px 16px;border-radius:6px;border:none;background:#2ab9a3;color:#fff;font-weight:600;cursor:pointer;">Dodaj</button>
+    </div>
+    <ul id="blacklistItems" style="list-style:none;padding:0;margin:0;overflow-y:auto;max-height:300px;"></ul>
+    <button id="blacklistClose" style="margin-top:16px;padding:10px;border-radius:6px;border:none;background:#555;color:#fff;font-weight:600;cursor:pointer;">Zamknij</button>
+  `;
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+
+  const renderItems = () => {
+    const list = getBlacklist();
+    const ul = document.getElementById("blacklistItems");
+    ul.innerHTML = list.length === 0
+      ? '<li style="color:#999;padding:8px 0;">Brak fraz na blackliście</li>'
+      : list.map((phrase, i) => `<li style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #333;"><span>${phrase}</span><button data-idx="${i}" style="background:#c0392b;border:none;color:#fff;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:12px;">Usuń</button></li>`).join("");
+    ul.querySelectorAll("button[data-idx]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = parseInt(btn.getAttribute("data-idx"));
+        const current = getBlacklist();
+        current.splice(idx, 1);
+        saveBlacklist(current);
+        renderItems();
+      });
+    });
+  };
+
+  document.getElementById("blacklistToggle").addEventListener("change", e => {
+    const enabled = e.target.checked;
+    setBlacklistEnabled(enabled);
+    document.getElementById("blacklistToggleLabel").textContent = enabled ? "Włączona" : "Wyłączona";
+    document.getElementById("blacklistToggleTrack").style.background = enabled ? "#2ab9a3" : "#555";
+    document.getElementById("blacklistToggleThumb").style.left = enabled ? "20px" : "2px";
+  });
+
+  document.getElementById("blacklistAdd").addEventListener("click", () => {
+    const input = document.getElementById("blacklistInput");
+    const val = input.value.trim();
+    if (!val) return;
+    const current = getBlacklist();
+    current.push(val);
+    saveBlacklist(current);
+    input.value = "";
+    renderItems();
+  });
+
+  document.getElementById("blacklistInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("blacklistAdd").click();
+  });
+
+  document.getElementById("blacklistClose").addEventListener("click", () => {
+    overlay.remove();
+  });
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  renderItems();
+};
+
 const getDOM = () => {
   return {
     progressBar: {
@@ -392,6 +486,16 @@ const processSearchResults = async (
       //console.log(`LOCAL OFFER: article.url`);
     }
 
+    // Early blacklist filtering - skip fetching nested pages for blacklisted titles
+    if (earlyBlacklist && isBlacklistEnabled()) {
+      const blacklist = getBlacklist();
+      const nameLower = article.name.toLowerCase();
+      if (blacklist.some(phrase => nameLower.includes(phrase.toLowerCase()))) {
+        console.log(`Early blacklist: "${article.name}" skipped`);
+        continue;
+      }
+    }
+
     const articleLink = article.productizationLinks?.productPage?.url;
     if (!articleLink) {
       // Article does not have "Porównaj x ofert" button
@@ -572,7 +676,7 @@ const restore = async () => {
   );
   await new Promise(r => setTimeout(r, 1));
   //let uniqueProducts = [];
-  const uniqueProducts = toDeduplicate.filter(
+  let uniqueProducts = toDeduplicate.filter(
     (value, index, self) =>
       index ===
       self.findIndex(t =>
@@ -581,6 +685,26 @@ const restore = async () => {
           : t.url === value.url,
       ),
   );
+
+  // Blacklist filtering
+  const blacklist = getBlacklist();
+  if (blacklist.length > 0 && isBlacklistEnabled()) {
+    DOM.progressBar.text.innerText = `Filtering blacklisted phrases (${blacklist.length})...`;
+    console.log(DOM.progressBar.text.innerText);
+    await new Promise(r => setTimeout(r, 1));
+    const beforeCount = uniqueProducts.length;
+    uniqueProducts = uniqueProducts.filter(item => {
+      const titleLower = item.name.toLowerCase();
+      for (const phrase of blacklist) {
+        if (titleLower.includes(phrase.toLowerCase())) {
+          console.log(`Blacklist: "${item.name}" contains "${phrase}", removing...`);
+          return false;
+        }
+      }
+      return true;
+    });
+    console.log(`Blacklist removed ${beforeCount - uniqueProducts.length} offers`);
+  }
 
   // Sorting
   DOM.progressBar.text.innerText = `Sorting by ${
@@ -621,7 +745,9 @@ const restore = async () => {
 
 const zNode = document.createElement("div");
 zNode.className = "mpof_5r mpof_vs_s mp4t_8 m3h2_16 mse2_40";
+zNode.style.cssText = "display:flex;gap:8px;align-items:center;";
 zNode.innerHTML =
+  '<button id="blacklistButton" class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 msbw_rf mldj_rf mtag_rf mm2b_rf msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mx7m_1 m911_co mefy_co mnyp_co mdwl_co mlkp_6x mqvr_g3 _1405b_ZtYZA" style="display:inline-flex;align-items:center;gap:6px;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="3" y1="1" x2="21" y2="23" stroke-width="2.5"/></svg></button>' +
   '<button id="myButton" class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 msbw_rf mldj_rf mtag_rf mm2b_rf msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mx7m_1 m911_co mefy_co mnyp_co mdwl_co mlkp_6x mqvr_g3 _1405b_ZtYZA">Rozłącz te same oferty</button>';
 
 function runWhenReady(readySelector, callback) {
@@ -647,6 +773,7 @@ function runWhenReady(readySelector, callback) {
 runWhenReady('[data-role="aboveItems"]', () => {
   document.querySelector('[data-role="aboveItems"]').appendChild(zNode);
   document.getElementById("myButton").addEventListener("click", restore, false);
+  document.getElementById("blacklistButton").addEventListener("click", openBlacklistPopup, false);
 });
 
 const genListing = listingData => {
