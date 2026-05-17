@@ -11,94 +11,94 @@
 // @connect      allegrolokalnie.pl
 // ==/UserScript==
 
-// enable to speed up the script at a cost of being blocked
-const fastMode = false;
-// enable to show only offers that have your keywords in the title
-const cleanOffers = false;
-// enable to persist blacklist across page reloads (localStorage), false = reset on reload
-const persistBlacklist = true;
-// enable to filter blacklisted offers BEFORE fetching nested pages (saves requests)
-const earlyBlacklist = true;
+// Settings management (localStorage-backed)
+const SETTINGS_PREFIX = "allegro_rozlacz_";
+const SETTINGS_DEFAULTS = {
+  fastMode: false,
+  burstLimit: 70,
+  burstStaggerMs: 10,
+  cleanOffers: false,
+  earlyBlacklist: true,
+  blacklistEnabled: true,
+};
+const getSetting = key => {
+  const raw = localStorage.getItem(SETTINGS_PREFIX + key);
+  if (raw === null) return SETTINGS_DEFAULTS[key];
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  const num = Number(raw);
+  return isNaN(num) ? raw : num;
+};
+const setSetting = (key, val) => localStorage.setItem(SETTINGS_PREFIX + key, String(val));
+
+// Convenience accessors
+const isFastMode = () => getSetting("fastMode");
+const getBurstLimit = () => getSetting("burstLimit");
+const getBurstStaggerMs = () => getSetting("burstStaggerMs");
+const isCleanOffers = () => getSetting("cleanOffers");
+const isEarlyBlacklist = () => getSetting("earlyBlacklist");
 
 let articleList = [];
+let _burstCount = 0;
+
+const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 // Blacklist management
 const BLACKLIST_KEY = "allegro_rozlacz_blacklist";
-const BLACKLIST_ENABLED_KEY = "allegro_rozlacz_blacklist_enabled";
-let _sessionBlacklist = [];
-let _sessionBlacklistEnabled = true;
-const getBlacklist = () => persistBlacklist ? JSON.parse(localStorage.getItem(BLACKLIST_KEY) || "[]") : _sessionBlacklist;
-const saveBlacklist = list => { if (persistBlacklist) localStorage.setItem(BLACKLIST_KEY, JSON.stringify(list)); else _sessionBlacklist = list; };
-const isBlacklistEnabled = () => persistBlacklist ? localStorage.getItem(BLACKLIST_ENABLED_KEY) !== "false" : _sessionBlacklistEnabled;
-const setBlacklistEnabled = val => { if (persistBlacklist) localStorage.setItem(BLACKLIST_ENABLED_KEY, val ? "true" : "false"); else _sessionBlacklistEnabled = val; };
+const getBlacklist = () => JSON.parse(localStorage.getItem(BLACKLIST_KEY) || "[]");
+const saveBlacklist = list => localStorage.setItem(BLACKLIST_KEY, JSON.stringify(list));
+const isBlacklistEnabled = () => getSetting("blacklistEnabled");
+const setBlacklistEnabled = val => setSetting("blacklistEnabled", val);
+
+// Toggle switch HTML helper
+const toggleHTML = (id, checked) => `
+  <div style="position:relative;width:40px;height:22px;flex-shrink:0;">
+    <input id="${id}" type="checkbox" ${checked ? "checked" : ""} style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;z-index:1;" />
+    <div class="toggle-track" style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:11px;background:${checked ? "#2ab9a3" : "#555"};transition:background .2s;"></div>
+    <div class="toggle-thumb" style="position:absolute;top:2px;left:${checked ? "20px" : "2px"};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;"></div>
+  </div>`;
+
+const wireToggle = (id, onChange) => {
+  const el = document.getElementById(id);
+  el.addEventListener("change", e => {
+    const on = e.target.checked;
+    el.parentElement.querySelector(".toggle-track").style.background = on ? "#2ab9a3" : "#555";
+    el.parentElement.querySelector(".toggle-thumb").style.left = on ? "20px" : "2px";
+    onChange(on);
+  });
+};
 
 const openBlacklistPopup = () => {
   if (document.getElementById("blacklistPopup")) return;
   const overlay = document.createElement("div");
   overlay.id = "blacklistPopup";
-  overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;";
+  overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100000;display:flex;align-items:center;justify-content:center;";
   const popup = document.createElement("div");
   popup.style.cssText = "background:#222;color:#fff;border-radius:12px;padding:24px;min-width:360px;max-width:500px;max-height:80vh;display:flex;flex-direction:column;font-family:Open Sans,sans-serif;";
   popup.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <h3 style="margin:0;font-size:1.1rem;">Blacklista fraz</h3>
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
-        <span style="font-size:13px;color:#aaa;" id="blacklistToggleLabel">${isBlacklistEnabled() ? "Włączona" : "Wyłączona"}</span>
-        <div style="position:relative;width:40px;height:22px;">
-          <input id="blacklistToggle" type="checkbox" ${isBlacklistEnabled() ? "checked" : ""} style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;z-index:1;" />
-          <div id="blacklistToggleTrack" style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:11px;background:${isBlacklistEnabled() ? "#2ab9a3" : "#555"};transition:background .2s;"></div>
-          <div id="blacklistToggleThumb" style="position:absolute;top:2px;left:${isBlacklistEnabled() ? "20px" : "2px"};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;"></div>
-        </div>
-      </label>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <input id="blacklistInput" type="text" placeholder="Wpisz frazę do zablokowania..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #555;background:#333;color:#fff;font-size:14px;" />
-      <button id="blacklistAdd" style="padding:8px 16px;border-radius:6px;border:none;background:#2ab9a3;color:#fff;font-weight:600;cursor:pointer;">Dodaj</button>
-    </div>
-    <ul id="blacklistItems" style="list-style:none;padding:0;margin:0;overflow-y:auto;max-height:300px;"></ul>
-    <button id="blacklistClose" style="margin-top:16px;padding:10px;border-radius:6px;border:none;background:#555;color:#fff;font-weight:600;cursor:pointer;">Zamknij</button>
+    <h3 style="margin:0 0 16px;font-size:1.1rem;">Edycja blacklisty</h3>
+    <p style="margin:0 0 12px;font-size:12px;color:#999;line-height:1.4;">Każda linia = jedna fraza do zablokowania. Wielkość liter nie ma znaczenia. Puste linie są pomijane. Zmiany zapisują się automatycznie.</p>
+    <textarea id="blacklistTextarea" spellcheck="false" placeholder="np.\niphone\nsamsung\nhuawei" style="width:100%;min-height:220px;padding:10px 12px;border-radius:6px;border:1px solid #555;background:#333;color:#fff;font-size:14px;font-family:monospace;line-height:1.5;resize:vertical;box-sizing:border-box;"></textarea>
+    <div id="blacklistCount" style="margin-top:6px;font-size:12px;color:#999;"></div>
+    <button id="blacklistClose" style="margin-top:12px;padding:10px;border-radius:6px;border:none;background:#555;color:#fff;font-weight:600;cursor:pointer;width:100%;">Wróć</button>
   `;
   overlay.appendChild(popup);
   document.body.appendChild(overlay);
 
-  const renderItems = () => {
-    const list = getBlacklist();
-    const ul = document.getElementById("blacklistItems");
-    ul.innerHTML = list.length === 0
-      ? '<li style="color:#999;padding:8px 0;">Brak fraz na blackliście</li>'
-      : list.map((phrase, i) => `<li style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #333;"><span>${phrase}</span><button data-idx="${i}" style="background:#c0392b;border:none;color:#fff;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:12px;">Usuń</button></li>`).join("");
-    ul.querySelectorAll("button[data-idx]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const idx = parseInt(btn.getAttribute("data-idx"));
-        const current = getBlacklist();
-        current.splice(idx, 1);
-        saveBlacklist(current);
-        renderItems();
-      });
-    });
+  const textarea = document.getElementById("blacklistTextarea");
+  const countEl = document.getElementById("blacklistCount");
+  textarea.value = getBlacklist().join("\n");
+
+  const updateCount = () => {
+    const phrases = textarea.value.split("\n").map(l => l.trim()).filter(Boolean);
+    countEl.textContent = phrases.length === 0 ? "Brak fraz" : `Fraz: ${phrases.length}`;
   };
+  updateCount();
 
-  document.getElementById("blacklistToggle").addEventListener("change", e => {
-    const enabled = e.target.checked;
-    setBlacklistEnabled(enabled);
-    document.getElementById("blacklistToggleLabel").textContent = enabled ? "Włączona" : "Wyłączona";
-    document.getElementById("blacklistToggleTrack").style.background = enabled ? "#2ab9a3" : "#555";
-    document.getElementById("blacklistToggleThumb").style.left = enabled ? "20px" : "2px";
-  });
-
-  document.getElementById("blacklistAdd").addEventListener("click", () => {
-    const input = document.getElementById("blacklistInput");
-    const val = input.value.trim();
-    if (!val) return;
-    const current = getBlacklist();
-    current.push(val);
-    saveBlacklist(current);
-    input.value = "";
-    renderItems();
-  });
-
-  document.getElementById("blacklistInput").addEventListener("keydown", e => {
-    if (e.key === "Enter") document.getElementById("blacklistAdd").click();
+  textarea.addEventListener("input", () => {
+    const phrases = textarea.value.split("\n").map(l => l.trim()).filter(Boolean);
+    saveBlacklist(phrases);
+    updateCount();
   });
 
   document.getElementById("blacklistClose").addEventListener("click", () => {
@@ -107,8 +107,100 @@ const openBlacklistPopup = () => {
   overlay.addEventListener("click", e => {
     if (e.target === overlay) overlay.remove();
   });
+};
 
-  renderItems();
+const settingRow = (label, desc, toggleId, checked, extra) => `
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #333;">
+    <div style="flex:1;margin-right:12px;">
+      <div style="font-size:14px;font-weight:600;">${label}</div>
+      ${desc ? '<div style="font-size:12px;color:#999;margin-top:2px;">' + desc + '</div>' : ''}
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      ${extra || ''}${toggleHTML(toggleId, checked)}
+    </div>
+  </div>`;
+
+const openSettingsPopup = () => {
+  if (document.getElementById("settingsPopup")) return;
+  const overlay = document.createElement("div");
+  overlay.id = "settingsPopup";
+  overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;";
+  const popup = document.createElement("div");
+  popup.style.cssText = "background:#222;color:#fff;border-radius:12px;padding:24px;min-width:400px;max-width:520px;max-height:80vh;display:flex;flex-direction:column;font-family:Open Sans,sans-serif;overflow-y:auto;";
+  popup.innerHTML = `
+    <h3 style="margin:0 0 16px;font-size:1.2rem;">Ustawienia</h3>
+    ${settingRow(
+      'Blacklista',
+      'Filtruj oferty po tytule wg zablokowanych fraz (' + getBlacklist().length + ' fraz)',
+      'sToggleBlacklist',
+      isBlacklistEnabled(),
+      '<button id="sEditBlacklist" style="padding:4px 12px;border-radius:6px;border:1px solid #555;background:#333;color:#fff;font-size:12px;cursor:pointer;white-space:nowrap;">Edytuj</button>'
+    )}
+    ${settingRow(
+      'Wczesna blacklista',
+      'Filtruj przed pobraniem zagnieżdżonych stron (oszczędza zapytania)',
+      'sToggleEarlyBlacklist',
+      isEarlyBlacklist()
+    )}
+    ${settingRow(
+      'Filtruj po słowach kluczowych',
+      'Pokaż tylko oferty zawierające wszystkie słowa z wyszukiwania',
+      'sToggleCleanOffers',
+      isCleanOffers()
+    )}
+    ${settingRow(
+      'Tryb szybki (burst)',
+      'Wysyłaj wiele zapytań równocześnie (ryzyko blokady 429)',
+      'sToggleFastMode',
+      isFastMode()
+    )}
+    <div style="padding:10px 0;border-bottom:1px solid #333;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:14px;font-weight:600;">Burst limit</div>
+          <div style="font-size:12px;color:#999;margin-top:2px;">Ile zapytań w początkowej paczce</div>
+        </div>
+        <input id="sBurstLimit" type="number" min="1" max="500" value="${getBurstLimit()}" style="width:70px;padding:6px 8px;border-radius:6px;border:1px solid #555;background:#333;color:#fff;font-size:14px;text-align:center;" />
+      </div>
+    </div>
+    <div style="padding:10px 0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:14px;font-weight:600;">Burst stagger (ms)</div>
+          <div style="font-size:12px;color:#999;margin-top:2px;">Opóźnienie między zapytaniami burst</div>
+        </div>
+        <input id="sBurstStagger" type="number" min="0" max="5000" value="${getBurstStaggerMs()}" style="width:70px;padding:6px 8px;border-radius:6px;border:1px solid #555;background:#333;color:#fff;font-size:14px;text-align:center;" />
+      </div>
+    </div>
+    <button id="settingsClose" style="margin-top:12px;padding:10px;border-radius:6px;border:none;background:#555;color:#fff;font-weight:600;cursor:pointer;">Zamknij</button>
+  `;
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+
+  wireToggle('sToggleBlacklist', on => setBlacklistEnabled(on));
+  wireToggle('sToggleEarlyBlacklist', on => setSetting('earlyBlacklist', on));
+  wireToggle('sToggleCleanOffers', on => setSetting('cleanOffers', on));
+  wireToggle('sToggleFastMode', on => setSetting('fastMode', on));
+
+  document.getElementById('sBurstLimit').addEventListener('change', e => {
+    const v = parseInt(e.target.value) || SETTINGS_DEFAULTS.burstLimit;
+    setSetting('burstLimit', v);
+  });
+  document.getElementById('sBurstStagger').addEventListener('change', e => {
+    const v = parseInt(e.target.value) || SETTINGS_DEFAULTS.burstStaggerMs;
+    setSetting('burstStaggerMs', v);
+  });
+
+  document.getElementById('sEditBlacklist').addEventListener('click', () => {
+    openBlacklistPopup();
+  });
+
+  document.getElementById('settingsClose').addEventListener('click', () => {
+    overlay.remove();
+  });
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.remove();
+  });
 };
 
 const getDOM = () => {
@@ -128,24 +220,77 @@ const getDOM = () => {
   };
 };
 
-const getOpboxJSON = async link => {
-  // Find
-  let mainOpboxRes;
+const showCaptchaAndWait = responseHTML => {
+  return new Promise(resolve => {
+    const match = responseHTML.match(/src="(https:\/\/allegrocaptcha\.com\/[^"]+)"/);
+    if (!match) {
+      console.error("Could not extract captcha URL from response");
+      resolve(false);
+      return;
+    }
+    const captchaSrc = match[1];
+    const captchaOrigin = new URL(captchaSrc).origin;
+
+    const overlay = document.createElement("div");
+    overlay.id = "captchaOverlay";
+    overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Open Sans,sans-serif;";
+    const info = document.createElement("div");
+    info.style.cssText = "color:#fff;font-size:1rem;margin-bottom:16px;text-align:center;";
+    info.textContent = "Allegro wymaga rozwiązania captcha. Rozwiąż ją poniżej, aby kontynuować pobieranie ofert.";
+    const iframe = document.createElement("iframe");
+    iframe.src = captchaSrc;
+    iframe.style.cssText = "width:450px;height:550px;border:none;border-radius:12px;background:#fff;";
+    overlay.appendChild(info);
+    overlay.appendChild(iframe);
+    document.body.appendChild(overlay);
+
+    const wdctx = document.cookie.match("(^|;)\\s*wdctx\\s*=\\s*([^;]+)")?.pop() || "";
+    iframe.onload = () => {
+      iframe.contentWindow.postMessage({ type: "context", deviceCtx: wdctx }, captchaOrigin);
+    };
+
+    const messageHandler = event => {
+      if (event.origin !== captchaOrigin) return;
+      if (event.data.type === "unlock") {
+        if (event.data.value !== "") {
+          document.cookie = "wdctx=" + event.data.value + "; Max-Age=2592000; Domain=.allegro.pl; Path=/; Secure";
+        }
+        window.removeEventListener("message", messageHandler);
+        overlay.remove();
+        resolve(true);
+      } else if (event.data.type === "reload") {
+        iframe.src = captchaSrc;
+      }
+    };
+    window.addEventListener("message", messageHandler);
+  });
+};
+
+const getOpboxJSON = async (link, retries = 2) => {
   try {
-    mainOpboxRes = await fetch(link, {
+    const res = await fetch(link, {
       headers: {
         accept: "application/vnd.opbox-web.v2+json",
       },
     });
-    if (mainOpboxRes.status != 200) {
-      console.error(
-        `Failed to get Opbox json - STATUS: ${mainOpboxRes.status}`,
-      );
-      console.error(await mainOpboxRes.text());
-      // TODO: Create retry
+    if (res.status === 429 || res.status === 403) {
+      const text = await res.text();
+      console.error(`Failed to get Opbox json - STATUS: ${res.status}`);
+      if (text.includes("allegrocaptcha.com") && retries > 0) {
+        console.log("Captcha detected, showing to user...");
+        const solved = await showCaptchaAndWait(text);
+        if (solved) {
+          return getOpboxJSON(link, retries - 1);
+        }
+      }
+      console.error(text);
+      return {};
     }
-    const mainOpbox = await mainOpboxRes.json();
-    return mainOpbox;
+    if (res.status !== 200) {
+      console.error(`Failed to get Opbox json - STATUS: ${res.status}`);
+      return {};
+    }
+    return await res.json();
   } catch (err) {
     console.error(`Failed to get offers for ${link}`);
     console.error(err.message);
@@ -223,7 +368,7 @@ const parseLokalnieHTML = html => {
     const title = article.querySelector("h3.mlc-itembox__title");
     const priceEl = article.querySelector(".ml-offer-price__dollars");
     const centsEl = article.querySelector(".ml-offer-price__cents");
-    const price = (priceEl?.textContent?.trim() || "0") + "." + (centsEl?.textContent?.trim() || "00");
+    const price = (priceEl?.textContent?.trim().replace(/\s/g, "") || "0") + "." + (centsEl?.textContent?.trim() || "00");
 
     // Offer type: buy_now, classified, bidding
     const offerTypeEl = article.querySelector(".mlc-itembox__offer-type");
@@ -407,12 +552,16 @@ const processProductPage = async (
   productName,
 ) => {
   let opbox = await getOpboxJSON(productLink);
-  if (!opbox.dataSources?.["listing-api-v3:allegro.listing:3.0"]) {
+  if (!opbox || !opbox.dataSources?.["listing-api-v3:allegro.listing:3.0"]) {
     console.error(`No listings from Opbox api for ${productLink}`);
     return;
   }
   const pagination =
-    opbox.dataSources["listing-api-v3:allegro.listing:3.0"].metadata.Pageable;
+    opbox.dataSources["listing-api-v3:allegro.listing:3.0"].metadata?.Pageable;
+  if (!pagination) {
+    console.error(`No pagination metadata from Opbox api for ${productLink}`);
+    return;
+  }
   const totalPages = Math.ceil(pagination.totalCount / pagination.pageSize);
   for (let i = 1; i <= totalPages; i++) {
     DOM.progressBar.text.innerText = `[PAGE ${currentPage}] Restoring offers for ${productName} - nested level ${i}`;
@@ -422,6 +571,10 @@ const processProductPage = async (
       //console.log(nextLink);
       nextLink.searchParams.set("p", i);
       opbox = await getOpboxJSON(nextLink);
+      if (!opbox.dataSources?.["listing-api-v3:allegro.listing:3.0"]) {
+        console.error(`No listings from Opbox api for nested page ${i} of ${productLink}`);
+        continue;
+      }
     }
     const nestedProducts = opbox.dataSources[
       "listing-api-v3:allegro.listing:3.0"
@@ -487,7 +640,7 @@ const processSearchResults = async (
     }
 
     // Early blacklist filtering - skip fetching nested pages for blacklisted titles
-    if (earlyBlacklist && isBlacklistEnabled()) {
+    if (isEarlyBlacklist() && isBlacklistEnabled()) {
       const blacklist = getBlacklist();
       const nameLower = article.name.toLowerCase();
       if (blacklist.some(phrase => nameLower.includes(phrase.toLowerCase()))) {
@@ -509,45 +662,41 @@ const processSearchResults = async (
       continue;
     }
 
-    // Generate link for product page
-    let fetchLink = `${articleLink}&${queryParams}`;
-    if (!articleLink.includes("?")) {
-      fetchLink = `${articleLink}?${queryParams}`;
+    // Generate link for product page — merge queryParams without duplicating keys already in articleLink
+    const articleURL = new URL(articleLink, location.origin);
+    const mainParams = new URLSearchParams(queryParams);
+    for (const [key, value] of mainParams) {
+      if (!articleURL.searchParams.has(key)) {
+        articleURL.searchParams.append(key, value);
+      }
     }
+    // URLSearchParams.toString() encodes spaces as '+', Allegro requires '%20'
+    const fetchLink = articleURL.origin + articleURL.pathname + '?' + articleURL.searchParams.toString().replaceAll('+', '%20');
 
-    if (fastMode) {
-      // Experimental - 429/403
-      /*let timeout = {
-            max: 500,
-            min: 250
-        };
-
-        if(currentPage % 2 == 0) {
-            timeout.max = 500;
-            timeout.min = 350;
-        } else {
-            timeout.max = 200;
-            timeout.min = 100;
-        }
-        await new Promise(r => setTimeout(r, Math.random() * (timeout.max - timeout.min) + timeout.min));*/
-      promiseArrayPrd.push(
-        processProductPage(DOM, fetchLink, currentPage, article.name),
-      );
-      if (promiseArrayPrd.length == 20) {
-        await Promise.all(promiseArrayPrd);
-        promiseArrayPrd = [];
+    if (isFastMode()) {
+      if (_burstCount < getBurstLimit()) {
+        // Burst phase: fire with small stagger to fill the bucket
+        _burstCount++;
+        promiseArrayPrd.push(
+          processProductPage(DOM, fetchLink, currentPage, article.name),
+        );
+        await new Promise(r => setTimeout(r, getBurstStaggerMs()));
+      } else {
+        // Post-burst: sequential (API latency ~500ms is natural rate limit)
+        await processProductPage(DOM, fetchLink, currentPage, article.name);
       }
     } else {
       // Get products using recursive fn
       await processProductPage(DOM, fetchLink, currentPage, article.name);
     }
   }
-  if (fastMode) {
+  if (isFastMode()) {
     await Promise.all(promiseArrayPrd);
   }
 };
 
 const restore = async () => {
+  _burstCount = 0;
   let DOM = getDOM();
   if (DOM.aiShit) DOM.aiShit.style.display = "none";
   // ProgressBar95
@@ -569,7 +718,8 @@ const restore = async () => {
   const mainURL = new URL(window.location.href);
   const mainURLQuery = new URLSearchParams(window.location.search);
   mainURLQuery.delete("string");
-  const queryParams = mainURLQuery.toString();
+  // URLSearchParams encodes spaces as '+', but Allegro requires '%20' (308 redirects otherwise)
+  const queryParams = mainURLQuery.toString().replaceAll('+', '%20');
   const pageCount = parseInt(DOM.pagination.innerText);
 
   console.log(
@@ -577,7 +727,6 @@ const restore = async () => {
   );
 
   // Get all listings
-  let promiseArray = [];
   for (let i = 1; i <= pageCount; i++) {
     DOM.progressBar.text.innerText = `Processing page ${i}`;
     console.log(DOM.progressBar.text.innerText);
@@ -589,25 +738,14 @@ const restore = async () => {
       }
     }
 
-    if (fastMode) {
-      // Experimental - 429/403
-      /*promiseArray.push(
-      processSearchResults(DOM, queryParams, nextLink, pageCount, i)
-    );*/
-      // the same strategy as slow for now
-      await processSearchResults(DOM, queryParams, nextLink, pageCount, i);
-    } else {
-      await processSearchResults(DOM, queryParams, nextLink, pageCount, i);
-    }
-  }
-  if (fastMode) {
-    // not working for now
-    //await Promise.all(promiseArray);
+    // Search pages always processed sequentially (burst happens inside for product pages)
+    await processSearchResults(DOM, queryParams, nextLink, pageCount, i);
   }
 
   // Fetch Allegro Lokalnie offers
   DOM.progressBar.text.innerText = `Fetching Allegro Lokalnie offers...`;
   console.log(DOM.progressBar.text.innerText);
+  // yield to UI thread for progress bar repaint
   await new Promise(r => setTimeout(r, 1));
   const lokalnieURL = buildLokalnieURL(mainURL);
   console.log(`Lokalnie URL: ${lokalnieURL}`);
@@ -641,12 +779,13 @@ const restore = async () => {
 
   // Clean results
 
-  if (cleanOffers) {
+  if (isCleanOffers()) {
     DOM.progressBar.text.innerText = `Cleaning up irrevelant offers...`;
     console.log(
       DOM.progressBar.text.innerText,
       `from ${articleList.length} articles`,
     );
+    // yield to UI thread for progress bar repaint
     await new Promise(r => setTimeout(r, 1));
     const keywords = mainURL.searchParams
       .get("string")
@@ -674,6 +813,7 @@ const restore = async () => {
     DOM.progressBar.text.innerText,
     `from ${articleList.length} articles`,
   );
+  // yield to UI thread for progress bar repaint
   await new Promise(r => setTimeout(r, 1));
   //let uniqueProducts = [];
   let uniqueProducts = toDeduplicate.filter(
@@ -691,6 +831,7 @@ const restore = async () => {
   if (blacklist.length > 0 && isBlacklistEnabled()) {
     DOM.progressBar.text.innerText = `Filtering blacklisted phrases (${blacklist.length})...`;
     console.log(DOM.progressBar.text.innerText);
+    // yield to UI thread for progress bar repaint
     await new Promise(r => setTimeout(r, 1));
     const beforeCount = uniqueProducts.length;
     uniqueProducts = uniqueProducts.filter(item => {
@@ -713,13 +854,23 @@ const restore = async () => {
       : "lowest price"
   }...`;
   console.log(DOM.progressBar.text.innerText);
+  // yield to UI thread for progress bar repaint
   await new Promise(r => setTimeout(r, 1));
 
-  // sort price asc for now
   switch (mainURL.searchParams.get("order")) {
-    case "pd":
+    case "pd": // cena: od najwyższej
       uniqueProducts.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
       break;
+    case "d": // cena z dostawą: od najniższej
+      uniqueProducts.sort((a, b) => parseFloat(a.priceShipping || a.price) - parseFloat(b.priceShipping || b.price));
+      break;
+    case "dd": // cena z dostawą: od najwyższej
+      uniqueProducts.sort((a, b) => parseFloat(b.priceShipping || b.price) - parseFloat(a.priceShipping || a.price));
+      break;
+    case "t": // czas do końca: najmniej — brak danych dla nie-licytacji, nie da się posortować lokalnie
+    case "n": // czas dodania: najnowsze — brak startingTime/createdAt w danych, nie da się posortować lokalnie
+    // "m" (trafność), "qd" (popularność), "prd" (ocena produktu) — brak danych do lokalnego sortowania, zostawiamy kolejność z API
+    case "p": // cena: od najniższej
     default:
       uniqueProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
       break;
@@ -747,7 +898,7 @@ const zNode = document.createElement("div");
 zNode.className = "mpof_5r mpof_vs_s mp4t_8 m3h2_16 mse2_40";
 zNode.style.cssText = "display:flex;gap:8px;align-items:center;";
 zNode.innerHTML =
-  '<button id="blacklistButton" class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 msbw_rf mldj_rf mtag_rf mm2b_rf msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mx7m_1 m911_co mefy_co mnyp_co mdwl_co mlkp_6x mqvr_g3 _1405b_ZtYZA" style="display:inline-flex;align-items:center;gap:6px;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="3" y1="1" x2="21" y2="23" stroke-width="2.5"/></svg></button>' +
+  '<button id="settingsButton" class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 msbw_rf mldj_rf mtag_rf mm2b_rf msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mx7m_1 m911_co mefy_co mnyp_co mdwl_co mlkp_6x mqvr_g3 _1405b_ZtYZA" style="display:inline-flex;align-items:center;gap:6px;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>' +
   '<button id="myButton" class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 msbw_rf mldj_rf mtag_rf mm2b_rf msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mx7m_1 m911_co mefy_co mnyp_co mdwl_co mlkp_6x mqvr_g3 _1405b_ZtYZA">Rozłącz te same oferty</button>';
 
 function runWhenReady(readySelector, callback) {
@@ -773,7 +924,7 @@ function runWhenReady(readySelector, callback) {
 runWhenReady('[data-role="aboveItems"]', () => {
   document.querySelector('[data-role="aboveItems"]').appendChild(zNode);
   document.getElementById("myButton").addEventListener("click", restore, false);
-  document.getElementById("blacklistButton").addEventListener("click", openBlacklistPopup, false);
+  document.getElementById("settingsButton").addEventListener("click", openSettingsPopup, false);
 });
 
 const genListing = listingData => {
@@ -806,6 +957,16 @@ const genListing = listingData => {
     positiveFeedbackPercent,
     positiveFeedbackCount,
   } = seller;
+  // Pre-escape all user-controlled strings for safe innerHTML insertion
+  const eName = escapeHTML(name);
+  const eUrl = escapeHTML(url);
+  const eMainImg = escapeHTML(mainImg);
+  const eLogin = escapeHTML(login);
+  const eOfferType = offerType ? escapeHTML(offerType) : "";
+  const eWhenDelivery = whenDelivery ? escapeHTML(whenDelivery) : "";
+  const ePopularityLabel = popularityLabel ? escapeHTML(popularityLabel) : "";
+  const ePriceSplit0 = escapeHTML(price.split(".")[0]);
+  const ePriceSplit1 = escapeHTML((price.split(".")[1] || "00").padEnd(2, "0"));
   return `<li class="mb54_5r mg9e_0 mvrt_0 mj7a_0 mh36_0 mp4t_0 m3h2_0 mryx_0 munh_0 mh85_56 mr3m_0 mli2_0 m7er_k4"><article class="mx7m_1 mnyp_co mlkp_ag mjyo_6x mse2_k4 _1e32a_kdIMd">
   <div
     class="mpof_ki mp7g_oh mh36_16 mh36_24_l mvrt_16 mvrt_24_l mg9e_8 mj7a_8 m7er_k4 mjyo_6x mgmw_3z m0ux_vh mp5q_jr m31c_kb _1e32a_R3NBG"
@@ -815,14 +976,14 @@ const genListing = listingData => {
         <div class="mpof_ki mp7g_oh">
           <div aria-hidden="true">
             <a
-              href="${url}"
+              href="${eUrl}"
               rel="nofollow"
               tabindex="-1"
               class="msts_9u mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_ki m389_6m mx4z_6m m7f5_6m _1e32a_JQ-zn _1e32a_pBYpQ"
               ><img
-                alt="${name}"
+                alt="${eName}"
                 loading="lazy"
-                src="${mainImg}"
+                src="${eMainImg}"
             /></a>
           </div>
         </div>
@@ -840,7 +1001,7 @@ const genListing = listingData => {
         <div class="_1e32a_meWPT _1e32a_WrGF-">
         ${
           isLokalnie && offerType
-            ? '<div class="mpof_ki mwdn_1 mgn2_12 m389_6m"><p class="mpof_uk mryx_0 mp4t_0">' + offerType.toUpperCase() + '</p></div>' +
+            ? '<div class="mpof_ki mwdn_1 mgn2_12 m389_6m"><p class="mpof_uk mryx_0 mp4t_0">' + eOfferType.toUpperCase() + '</p></div>' +
               (isBidding && biddingTimeLeft != null
                 ? '<p class="mg9e_0 mvrt_0 mj7a_0 mh36_0 mpof_uk mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0 _1e32a_LO84T">' + biddingTimeLeft + (biddingTimeLeft === 1 ? " dzień</p>" : " dni</p>")
                 : '')
@@ -852,15 +1013,15 @@ const genListing = listingData => {
         }
           <h2 class="m9qz_yp mqu1_16 mp4t_0 m3h2_0 mryx_0 munh_0">
             <a
-              href="${url}"
+              href="${eUrl}"
               class="mgn2_14 mp0t_0a mgmw_wo mli8_k4 mqen_m6 l1o8h mj9z_5r l5s4b mpof_z0 mqu1_16 _1e32a_zIS-q"
-              >${name}</a
+              >${eName}</a
             >
           </h2>
           ${
             isLokalnie
               ? `<div class="mpof_ki mwdn_1 m389_6m m389_a6_m">
-            <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0"><span class="mgmw_wo">${login}</span></p>
+            <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0"><span class="mgmw_wo">${eLogin}</span></p>
           </div>`
               : `<div class="mpof_ki mwdn_1 m389_6m m389_a6_m">
             ${
@@ -870,7 +1031,7 @@ const genListing = listingData => {
             }
             <div class="m3h2_8">
               <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">
-                <span class="mgmw_wo">${login}</span>
+                <span class="mgmw_wo">${eLogin}</span>
               </p>
             </div>
             ${
@@ -880,21 +1041,21 @@ const genListing = listingData => {
                   "%</span></p></div>"
                 : ""
             }
-            <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">${positiveFeedbackCount} ocen</p>
+            <p class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">${escapeHTML(positiveFeedbackCount)} ocen</p>
           </div>`
           }
           <div>
             <dl class="mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0 mjru_k4 meqh_en msa3_ae m6ax_n4 mqu1_g3 _1e32a_hUR4a _1e32a_LsWHh">
-              ${parameters.map(p => `<dt class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_3z _1e32a_bkpJC">${p.name}</dt> <dd class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_wo mvrt_8">${p.values.join(", ")}</dd>`).join("")}
+              ${parameters.map(p => `<dt class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_3z _1e32a_bkpJC">${escapeHTML(p.name)}</dt> <dd class="mpof_uk mp4t_0 m3h2_0 mryx_0 munh_0 mgmw_wo mvrt_8">${escapeHTML(p.values.join(", "))}</dd>`).join("")}
             </dl>
           </div>
           <div class="mj7a_4 mg9e_4 _1e32a_IAwmj">
             <div class="mpof_ki m389_0a mwdn_1 _1e32a_ZDCQ-">
               <div class="msa3_z4 m3h2_8">
-                <p aria-label="${price}&nbsp;zł aktualna cena" tabindex="0" class="mp4t_0 m3h2_0 mryx_0 munh_0 mpof_uk">
+                <p aria-label="${escapeHTML(price)}&nbsp;zł aktualna cena" tabindex="0" class="mp4t_0 m3h2_0 mryx_0 munh_0 mpof_uk">
                   <span
                     class="mli8_k4 msa3_z4 mqu1_1 mp0t_ji m9qz_yo mgmw_qw mgn2_27 mgn2_30_s"
-                    >${price.split(".")[0]},<span class="mgn2_19 mgn2_21_s m9qz_yq">${price.split(".")[1] || "00"}</span
+                    >${ePriceSplit0},<span class="mgn2_19 mgn2_21_s m9qz_yq">${ePriceSplit1}</span
                     >&nbsp;<span class="mgn2_19 mgn2_21_s m9qz_yq"
                       >zł</span
                     ></span
@@ -911,14 +1072,14 @@ const genListing = listingData => {
           ${
             isBiddingBuyNow
               ? '<p class="mh36_0 mvrt_0 mp4t_0 m3h2_0 mryx_0 munh_0 mgn2_12 mqu1_g3 mpof_z0 mgmw_qw"><span class="msa3_z4 m9qz_yq m3h2_4">' +
-                biddingBuyNowPrice +
+                escapeHTML(biddingBuyNowPrice) +
                 '&nbsp;zł</span><span class="m9qz_yp">kup teraz</span></p>'
               : ""
           }
           ${
             priceShipping
               ? `<p class="mqu1_g3 mgn2_12 mp4t_0 m3h2_0 mryx_0 munh_0">
-            ${priceShipping}&nbsp;zł z dostawą
+            ${escapeHTML(priceShipping)}&nbsp;zł z dostawą
           </p>`
               : ""
           }
@@ -932,7 +1093,7 @@ const genListing = listingData => {
                   font-weight: bold;
                   text-decoration: none;
                 "
-                >${whenDelivery}</span
+                >${eWhenDelivery}</span
               >
             </span>
           </span>`
@@ -941,19 +1102,19 @@ const genListing = listingData => {
           ${isLokalnie ? '<span class="mqu1_1"><picture><source media="(prefers-color-scheme: dark)" srcset="https://a.allegroimg.com/original/34cfc8/10ec4f874e53943e4874ec35cf46/dark-brand-subbrand-allegro-lokalnie-9ec666e2c7"><img src="https://a.allegroimg.com/original/34a54b/cf0e78534a3db96bc835307f3006/brand-subbrand-allegro-lokalnie-9d019981af" alt="Allegro Lokalnie"></picture></span>' : ""}
         </div>
         <div class="mg9e_4 mj7a_8 mpof_ki myre_zn myre_8v_l m389_a6 m389_6m_l m7f5_0a mp4t_0 mp4t_16_l _1e32a_orZUV">
-          ${popularityLabel ? '<div class="mpof_vs mgn2_12 mqu1_1 mgmw_3z"><span>' + popularityLabel + "</span></div>" : ""}
+          ${ePopularityLabel ? '<div class="mpof_vs mgn2_12 mqu1_1 mgmw_3z"><span>' + ePopularityLabel + "</span></div>" : ""}
           <div class="mpof_ki m389_6m mp4t_16 mp4t_0_l">
             ${
               isLokalnie
                 ? '<a href="' +
-                  url +
+                  eUrl +
                   '" target="_blank" rel="noreferrer" class="mgn2_16 mp0t_0a m9qz_yq mp7g_oh mtsp_ib mli8_k4 mp4t_0 mryx_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_8 mj7a_8 mjir_sv m2ha_2 m8qd_vz mjt1_n2 m09p_40 b89vd mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp btnch b8x7t munh_0 munh_16_l m3h2_0 m3h2_8_m" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;"><span>Zobacz ogłoszenie</span></a>'
                 : !isBidding || isBiddingBuyNow
                   ? '<button data-role-type="add-to-cart-button" class="mgn2_16 mp0t_0a m9qz_yq mp7g_oh mtsp_ib mli8_k4 mp4t_0 mryx_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_8 mj7a_8 mjir_sv m2ha_2 m8qd_vz mjt1_n2 m09p_40 b89vd mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp btnch b8x7t munh_0 munh_16_l m3h2_0 m3h2_8_m"><span>dodaj do koszyka</span></button>'
                   : ""
             }<button
               title="Dodaj do ulubionych"
-              aria-label="Dodaj do ulubionych ${name}"
+              aria-label="Dodaj do ulubionych ${eName}"
               class="m7er_40 mp0t_0a m9qz_yq mp7g_oh mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 m911_5r mefy_5r mnyp_5r mdwl_5r msbw_rf mldj_rf mtag_rf mm2b_rf mqvr_2 mqen_m6 meqh_en m0qj_5r msts_n7 mjir_sv m2ha_2 m8qd_vz mjt1_n2 m09p_40 b89vd mqu1_1 mgn2_13 mg9e_0 mvrt_0 mj7a_0 mh36_0 mse2_40 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b2mt3"
             >
               <picture
