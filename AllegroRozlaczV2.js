@@ -18,8 +18,8 @@ const SETTINGS_DEFAULTS = {
   burstLimit: 70,
   burstStaggerMs: 10,
   cleanOffers: false,
-  earlyBlacklist: true,
-  blacklistEnabled: true,
+  earlyBlacklist: false,
+  blacklistEnabled: false,
 };
 const getSetting = key => {
   const raw = localStorage.getItem(SETTINGS_PREFIX + key);
@@ -220,15 +220,41 @@ const getDOM = () => {
   };
 };
 
-const showCaptchaAndWait = responseHTML => {
-  return new Promise(resolve => {
-    const match = responseHTML.match(/src="(https:\/\/allegrocaptcha\.com\/[^"]+)"/);
-    if (!match) {
+let _captchaPromise = null;
+
+const extractCaptchaURL = responseText => {
+  // Format 1: allegrocaptcha.com — HTML with iframe src
+  const allegroMatch = responseText.match(/src="(https:\/\/allegrocaptcha\.com\/[^"]+)"/);
+  if (allegroMatch) return { url: allegroMatch[1], type: "allegro" };
+  // Format 2: DataDome captcha-delivery.com — JSON with url field
+  try {
+    const json = JSON.parse(responseText);
+    if (json.url && json.url.includes("captcha-delivery.com")) {
+      return { url: json.url, type: "datadome" };
+    }
+  } catch (e) {}
+  // Format 3: DataDome URL in raw text
+  const ddMatch = responseText.match(/(https:\/\/geo\.captcha-delivery\.com\/captcha\/[^\s"']+)/);
+  if (ddMatch) return { url: ddMatch[1], type: "datadome" };
+  return null;
+};
+
+const showCaptchaAndWait = responseText => {
+  // Singleton: if captcha is already showing, all callers wait for the same resolution
+  if (_captchaPromise) {
+    console.log("Captcha already showing, waiting for existing resolution...");
+    return _captchaPromise;
+  }
+
+  _captchaPromise = new Promise(resolve => {
+    const captchaInfo = extractCaptchaURL(responseText);
+    if (!captchaInfo) {
       console.error("Could not extract captcha URL from response");
+      _captchaPromise = null;
       resolve(false);
       return;
     }
-    const captchaSrc = match[1];
+    const captchaSrc = captchaInfo.url;
     const captchaOrigin = new URL(captchaSrc).origin;
 
     const overlay = document.createElement("div");
@@ -242,41 +268,106 @@ const showCaptchaAndWait = responseHTML => {
     iframe.style.cssText = "width:450px;height:550px;border:none;border-radius:12px;background:#fff;";
     overlay.appendChild(info);
     overlay.appendChild(iframe);
+
+    // For DataDome captcha — no postMessage support, add manual controls
+    if (captchaInfo.type === "datadome") {
+      const btnRow = document.createElement("div");
+      btnRow.style.cssText = "margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;";
+
+      const refreshBtn = document.createElement("button");
+      refreshBtn.textContent = "Odśwież iframe";
+      refreshBtn.style.cssText = "padding:10px 20px;border-radius:8px;border:1px solid #555;background:#333;color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;";
+      refreshBtn.addEventListener("click", () => {
+        iframe.src = captchaSrc;
+      });
+
+      const clearBtn = document.createElement("button");
+      clearBtn.textContent = "Wyczyść cookies + napraw";
+      clearBtn.style.cssText = "padding:10px 20px;border-radius:8px;border:1px solid #555;background:#333;color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;";
+      clearBtn.addEventListener("click", () => {
+        // Clear DataDome and captcha-related cookies, then load allegro.pl in iframe to regenerate valid cookies
+        const cookiesToClear = ["datadome", "wdctx"];
+        for (const name of cookiesToClear) {
+          document.cookie = name + "=; Max-Age=0; Domain=.allegro.pl; Path=/;";
+          document.cookie = name + "=; Max-Age=0; Path=/;";
+        }
+        console.log("Cleared DataDome cookies, loading allegro.pl to fix cookies...");
+        clearBtn.disabled = true;
+        clearBtn.textContent = "Ładowanie allegro.pl...";
+        clearBtn.style.opacity = "0.6";
+        iframe.style.opacity = "0.3";
+        iframe.onload = () => {
+          clearBtn.textContent = "Załadowano ✓";
+          iframe.style.opacity = "1";
+        };
+        iframe.src = "https://allegro.pl/";
+      });
+
+      const doneBtn = document.createElement("button");
+      doneBtn.textContent = "Kontynuuj";
+      doneBtn.style.cssText = "padding:10px 24px;border-radius:8px;border:none;background:#2ab9a3;color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;";
+      doneBtn.addEventListener("click", () => {
+        overlay.remove();
+        _captchaPromise = null;
+        resolve(true);
+      });
+
+      btnRow.appendChild(refreshBtn);
+      btnRow.appendChild(clearBtn);
+      btnRow.appendChild(doneBtn);
+      overlay.appendChild(btnRow);
+
+      const hint = document.createElement("div");
+      hint.style.cssText = "margin-top:12px;color:#999;font-size:12px;text-align:center;max-width:450px;";
+      hint.textContent = "Jeśli widzisz 'You have been blocked' — kliknij 'Wyczyść cookies + napraw'. Iframe wczyta allegro.pl żeby odbudować cookies. Potem kliknij 'Kontynuuj'.";
+      overlay.appendChild(hint);
+    }
+
     document.body.appendChild(overlay);
 
-    const wdctx = document.cookie.match("(^|;)\\s*wdctx\\s*=\\s*([^;]+)")?.pop() || "";
-    iframe.onload = () => {
-      iframe.contentWindow.postMessage({ type: "context", deviceCtx: wdctx }, captchaOrigin);
-    };
+    if (captchaInfo.type === "allegro") {
+      const wdctx = document.cookie.match("(^|;)\\s*wdctx\\s*=\\s*([^;]+)")?.pop() || "";
+      iframe.onload = () => {
+        iframe.contentWindow.postMessage({ type: "context", deviceCtx: wdctx }, captchaOrigin);
+      };
 
-    const messageHandler = event => {
-      if (event.origin !== captchaOrigin) return;
-      if (event.data.type === "unlock") {
-        if (event.data.value !== "") {
-          document.cookie = "wdctx=" + event.data.value + "; Max-Age=2592000; Domain=.allegro.pl; Path=/; Secure";
+      const messageHandler = event => {
+        if (event.origin !== captchaOrigin) return;
+        if (event.data.type === "unlock") {
+          if (event.data.value !== "") {
+            document.cookie = "wdctx=" + event.data.value + "; Max-Age=2592000; Domain=.allegro.pl; Path=/; Secure";
+          }
+          window.removeEventListener("message", messageHandler);
+          overlay.remove();
+          _captchaPromise = null;
+          resolve(true);
+        } else if (event.data.type === "reload") {
+          iframe.src = captchaSrc;
         }
-        window.removeEventListener("message", messageHandler);
-        overlay.remove();
-        resolve(true);
-      } else if (event.data.type === "reload") {
-        iframe.src = captchaSrc;
-      }
-    };
-    window.addEventListener("message", messageHandler);
+      };
+      window.addEventListener("message", messageHandler);
+    }
   });
+
+  return _captchaPromise;
 };
 
-const getOpboxJSON = async (link, retries = 2) => {
+const getOpboxJSON = async (link, retries = 3) => {
   try {
     const res = await fetch(link, {
       headers: {
         accept: "application/vnd.opbox-web.v2+json",
       },
     });
+    if (res.status === 503 && retries > 0) {
+      console.warn(`503 Service Unavailable for ${link}, retrying in 5s... (${retries} retries left)`);
+      await new Promise(r => setTimeout(r, 5000));
+      return getOpboxJSON(link, retries - 1);
+    }
     if (res.status === 429 || res.status === 403) {
       const text = await res.text();
       console.error(`Failed to get Opbox json - STATUS: ${res.status}`);
-      if (text.includes("allegrocaptcha.com") && retries > 0) {
+      if (extractCaptchaURL(text) && retries > 0) {
         console.log("Captcha detected, showing to user...");
         const solved = await showCaptchaAndWait(text);
         if (solved) {
@@ -294,6 +385,19 @@ const getOpboxJSON = async (link, retries = 2) => {
   } catch (err) {
     console.error(`Failed to get offers for ${link}`);
     console.error(err.message);
+    // Network errors (ERR_CONNECTION_RESET, Failed to fetch) during rate limiting
+    if (retries > 0) {
+      // If captcha is already showing, wait for it to resolve before retrying
+      if (_captchaPromise) {
+        console.log(`Network error, waiting for captcha resolution before retrying ${link}...`);
+        await _captchaPromise;
+        return getOpboxJSON(link, retries - 1);
+      }
+      // Otherwise backoff and retry (server may be throttling connections)
+      console.warn(`Network error, retrying in 5s... (${retries} retries left)`);
+      await new Promise(r => setTimeout(r, 5000));
+      return getOpboxJSON(link, retries - 1);
+    }
     return {};
   }
 };
