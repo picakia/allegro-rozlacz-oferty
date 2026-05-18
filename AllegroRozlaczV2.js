@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2026-05-14_17-26
+// @version      2026-05-18_11-39
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -368,7 +368,13 @@ const parseLokalnieHTML = html => {
     const title = article.querySelector("h3.mlc-itembox__title");
     const priceEl = article.querySelector(".ml-offer-price__dollars");
     const centsEl = article.querySelector(".ml-offer-price__cents");
-    const price = (priceEl?.textContent?.trim().replace(/\s/g, "") || "0") + "." + (centsEl?.textContent?.trim() || "00");
+    const rawDollars = priceEl?.textContent?.trim().replace(/[\s,]/g, "") || "0";
+    const rawCents = centsEl?.textContent?.trim().replace(/[^0-9]/g, "") || "";
+    // If dollars already contained a comma decimal (e.g. "399,99") and no cents element exists, extract cents from dollars
+    const commaMatch = priceEl?.textContent?.trim().match(/(\d[\d\s]*),(\d+)/);
+    const dollars = commaMatch && !rawCents ? commaMatch[1].replace(/\s/g, "") : rawDollars;
+    const cents = rawCents || (commaMatch ? commaMatch[2] : "00");
+    const price = dollars + "." + cents;
 
     // Offer type: buy_now, classified, bidding
     const offerTypeEl = article.querySelector(".mlc-itembox__offer-type");
