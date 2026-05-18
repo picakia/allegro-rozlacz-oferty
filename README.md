@@ -2,7 +2,7 @@
 
 Projekt mający na celu próbę przywrócenia rozłączania ofert allegro. 
 
-Aktualnie dostępny jest userscript `AllegroRozlaczV2.js` do załadowania w menadżerze skryptów, np. Tampermonkey ~oraz wstępna wersja rozszerzenia do przeglądarki używając manifest V2~ (nieaktualna)
+Aktualnie dostępny jest userscript `AllegroRozlaczV2.js` do załadowania w menadżerze skryptów, np. Tampermonkey
 
 ## Instalacja w menadżerze skryptów
 
@@ -23,7 +23,9 @@ Ten skrypt robi dokładnie to o co prosi Allegro - Klika **każdy** guzik "Poró
 
 Niestety może się zdarzyć, że skrypt spowoduje błąd 429 lub 403 oznaczający przekroczenie ilości zapytań w czasie (widoczny w konsoli deweloperskiej). Rozwiązaniem jest najczęściej odświeżenie strony i rozwiązanie captcha/puzelka.
 
-W kodzie nie ma aktualnie żadnych timeoutów, ale samo API odpowiada dość wolno i blokada jest raczej rzadka.
+W kodzie istnieją 2 tryby pracy:
+1. (domyślny) Pojedyncze zapytanie do API -> Oczekiwanie na odpowiedź -> Następne zapytanie. Działa dość wolno, ale blokada jest raczej rzadka.
+2. Konfigurowalna ilość jednoczesnych zapytań do API razem z przerwami między zapytaniami w ustawieniach po których skrypt wraca do trybu 1. To ustawienie znacznie zwiększa szanse na blokadę, ale skrypt oferuje obsługę captcha.
 
 ## Jak używać
 
@@ -34,23 +36,23 @@ Po instalacji i odświeżeniu allegro.pl powinien pojawić się guzik 'Rozłącz
 W moich testach skrypt potrafił odczytać maksymalnie około 2000 ofert. Przy większej ilości wystarczyło zwykle rozwiązać captcha.
 
 Po kliknięciu guzika powinien pojawić się pasek pokazujący postęp (aktualnie tylko w ciemnym motywie). Gdyby szedł za szybko lub długo wisiał w jednym miejscu to sprawdź konsolę przeglądarki. 
-Prawdopodobnie to blokada 403/429 - odświenie strony powinno pomóc.
+
+Błędy 403/429 są automatycznie obsługiwane przez Iframe z opcją rozwiązania puzelka lub wyczysczenia ciastek (UWAGA! To wylogowuje z konta).
 
 Jeśli wszystko pójdzie dobrze to rozłączone oferty powinny się pojawić na stronie posortowane od najniższej ceny.
 
 Dodatkowo działa też sortowanie po najwyższej cenie, w tym celu **przed kliknięciem guzika** wybierz sortowanie od najwyższej ceny. **Inne sortowania nie działają na razie**
 
+Jest też opcja blacklisty konkretnych słów, która pozwala zdefiniować jakie oferty chcemy odfiltrować z wyników. Dla przykładu szukamy "Odkurzacz automatyczny Dreame" i chcemy ukryć wszystkie oferty ze słowem "akcesoria". Wystarczy to słowo wpisać do blacklisty i oferty zawierające słowo akcesoria zostaną odfiltrowane z całości.
+
 ## Co dalej - od najpilniejszych
 
-- Obsługa błędów i informacja graficzna dla Usera
 - Funkcjonalny guzik "Dodaj do koszyka"
 - Funkcjonalny guzik "Dodaj do ulubionych"
 - Wrzucenie skryptu do GreasyFork
 - Dodanie obsługi większej ilości sortowań
 - Działające powiększanie i przeglądanie zdjęć aukcji po najechaniu myszką
 - Działające filtry (tylko zawężanie, w drugą stronę nie jest wykonalne)
-- Dodanie IFrame lub okna gdzie w razie zablokowania będzie można rozwiązać captcha/puzelek po czym kontynuowanie pobieranie ofert
-- Przyśpieszenie skryptu poprzez jednoczesne zapytania, jednak nie przekraczające limitów API
 - Jasny motyw
 - Porządek w repozytorium
 - Finalna wersja rozszerzenia i wrzucenie do web storów - wymaga dużej ilości pracy 

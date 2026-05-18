@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2026-05-18_11-39
+// @version      2026-05-18_17-07
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -15,7 +15,7 @@
 const SETTINGS_PREFIX = "allegro_rozlacz_";
 const SETTINGS_DEFAULTS = {
   fastMode: false,
-  burstLimit: 70,
+  burstLimit: 50,
   burstStaggerMs: 10,
   cleanOffers: false,
   earlyBlacklist: false,
