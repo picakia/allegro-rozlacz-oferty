@@ -1,15 +1,78 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2026-05-18_17-07
+// @version      2026-05-19_18-26
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
 // @match        https://allegro.pl/listing*
+// @match        https://geo.captcha-delivery.com/captcha/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=allegro.pl
 // @grant        GM_xmlhttpRequest
 // @connect      allegrolokalnie.pl
 // ==/UserScript==
+
+// --- Captcha auto-solver: runs inside geo.captcha-delivery.com iframe ---
+if (window.location.hostname === "geo.captcha-delivery.com") {
+  (async () => {
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    const waitForEl = (selector, timeout = 15000) => new Promise((resolve, reject) => {
+      const start = Date.now();
+      const check = setInterval(() => {
+        const el = document.querySelector(selector);
+        if (el) { clearInterval(check); resolve(el); }
+        else if (Date.now() - start > timeout) { clearInterval(check); reject(new Error(`Timeout waiting for ${selector}`)); }
+      }, 200);
+    });
+
+    try {
+      const confirmBtn = await waitForEl('#captcha_display_button button', 10000);
+      confirmBtn.click();
+
+      await sleep(500);
+      const sliderIcon = await waitForEl('.sliderIcon', 15000);
+      const targetIcon = await waitForEl('.sliderTargetIcon', 5000);
+      await sleep(300 + Math.random() * 200);
+
+      const startRect = sliderIcon.getBoundingClientRect();
+      const endRect = targetIcon.getBoundingClientRect();
+      const startX = startRect.left + startRect.width / 2;
+      const startY = startRect.top + startRect.height / 2;
+      const endX = endRect.left + endRect.width / 2;
+      const endY = endRect.top + endRect.height / 2;
+
+      const fire = (type, x, y, target) => {
+        target.dispatchEvent(new MouseEvent(type, {
+          bubbles: true, cancelable: true, clientX: x, clientY: y, buttons: 1, view: unsafeWindow
+        }));
+      };
+
+      fire('mousemove', startX, startY, sliderIcon);
+      await sleep(100 + Math.random() * 150);
+      fire('mousedown', startX, startY, sliderIcon);
+      await sleep(50);
+
+      const steps = 40;
+      for (let i = 0; i <= steps; i++) {
+        const progress = i / steps;
+        const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        const currentX = startX + (endX - startX) * ease;
+        const currentY = startY + (endY - startY) * ease + (Math.random() - 0.5) * 2;
+        const target = document.elementFromPoint(currentX, currentY) || document.body;
+        fire('mousemove', currentX, currentY, target);
+        await sleep(8 + Math.random() * 12);
+      }
+
+      await sleep(50 + Math.random() * 120);
+      const finalTarget = document.elementFromPoint(endX, endY) || document.body;
+      fire('mouseup', endX, endY, finalTarget);
+    } catch (e) {
+      console.warn('[Captcha solver]', e.message);
+    }
+  })();
+  return;
+}
 
 // Settings management (localStorage-backed)
 const SETTINGS_PREFIX = "allegro_rozlacz_";
@@ -20,6 +83,8 @@ const SETTINGS_DEFAULTS = {
   cleanOffers: false,
   earlyBlacklist: false,
   blacklistEnabled: false,
+  autoClearCookies: false,
+  burstReset: false,
 };
 const getSetting = key => {
   const raw = localStorage.getItem(SETTINGS_PREFIX + key);
@@ -36,6 +101,8 @@ const isFastMode = () => getSetting("fastMode");
 const getBurstLimit = () => getSetting("burstLimit");
 const getBurstStaggerMs = () => getSetting("burstStaggerMs");
 const isCleanOffers = () => getSetting("cleanOffers");
+const isAutoClearCookies = () => getSetting("autoClearCookies");
+const isBurstReset = () => getSetting("burstReset");
 const isEarlyBlacklist = () => getSetting("earlyBlacklist");
 
 let articleList = [];
@@ -149,6 +216,18 @@ const openSettingsPopup = () => {
       isCleanOffers()
     )}
     ${settingRow(
+      'Auto-czyszczenie cookies',
+      'Przy blokadzie automatycznie czyści cookies i odświeża po 1s',
+      'sToggleAutoClear',
+      isAutoClearCookies()
+    )}
+    ${settingRow(
+      'Burst reset po blokadzie',
+      'Po rozwiązaniu blokady/captchy ponownie wykonaj burst zapytań',
+      'sToggleBurstReset',
+      isBurstReset()
+    )}
+    ${settingRow(
       'Tryb szybki (burst)',
       'Wysyłaj wiele zapytań równocześnie (ryzyko blokady 429)',
       'sToggleFastMode',
@@ -181,6 +260,8 @@ const openSettingsPopup = () => {
   wireToggle('sToggleEarlyBlacklist', on => setSetting('earlyBlacklist', on));
   wireToggle('sToggleCleanOffers', on => setSetting('cleanOffers', on));
   wireToggle('sToggleFastMode', on => setSetting('fastMode', on));
+  wireToggle('sToggleAutoClear', on => setSetting('autoClearCookies', on));
+  wireToggle('sToggleBurstReset', on => setSetting('burstReset', on));
 
   document.getElementById('sBurstLimit').addEventListener('change', e => {
     const v = parseInt(e.target.value) || SETTINGS_DEFAULTS.burstLimit;
@@ -239,7 +320,7 @@ const extractCaptchaURL = responseText => {
   return null;
 };
 
-const showCaptchaAndWait = responseText => {
+const showCaptchaAndWait = (responseText, { silentBlock = false, autoClick = true } = {}) => {
   // Singleton: if captcha is already showing, all callers wait for the same resolution
   if (_captchaPromise) {
     console.log("Captcha already showing, waiting for existing resolution...");
@@ -248,29 +329,54 @@ const showCaptchaAndWait = responseText => {
 
   _captchaPromise = new Promise(resolve => {
     const captchaInfo = extractCaptchaURL(responseText);
-    if (!captchaInfo) {
-      console.error("Could not extract captcha URL from response");
-      _captchaPromise = null;
-      resolve(false);
-      return;
-    }
-    const captchaSrc = captchaInfo.url;
-    const captchaOrigin = new URL(captchaSrc).origin;
+    // Always load allegro.pl — captcha will appear there and auto-solver handles it via @match
+    const useFallback = true;
+    const captchaSrc = "https://allegro.pl/";
+    const captchaOrigin = "https://allegro.pl";
+    const captchaType = captchaInfo ? captchaInfo.type : "datadome";
 
     const overlay = document.createElement("div");
     overlay.id = "captchaOverlay";
     overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Open Sans,sans-serif;";
     const info = document.createElement("div");
     info.style.cssText = "color:#fff;font-size:1rem;margin-bottom:16px;text-align:center;";
-    info.textContent = "Allegro wymaga rozwiązania captcha. Rozwiąż ją poniżej, aby kontynuować pobieranie ofert.";
+    info.textContent = silentBlock
+      ? "\u26a0\ufe0f Wykryto cichą blokadę (timeout). Ładowanie allegro.pl może chwilę potrwać z powodu przyblokowania przez serwery."
+      : "Allegro wymaga rozwiązania captcha. Rozwiąż ją poniżej, aby kontynuować pobieranie ofert.";
     const iframe = document.createElement("iframe");
     iframe.src = captchaSrc;
     iframe.style.cssText = "width:450px;height:550px;border:none;border-radius:12px;background:#fff;";
     overlay.appendChild(info);
     overlay.appendChild(iframe);
 
-    // For DataDome captcha — no postMessage support, add manual controls
-    if (captchaInfo.type === "datadome") {
+    // Auto-continue for fallback mode (allegro.pl loaded directly) — detect "Moje Allegro" button
+    if (useFallback) {
+      iframe.onload = () => {
+        const checkReady = setInterval(() => {
+          try {
+            const doc = iframe.contentDocument || iframe.contentWindow?.document;
+            if (!doc) return;
+            // Success: "Moje Allegro" button found — session is valid
+            if (doc.querySelector('[data-role="header-dropdown-toggle"]')) {
+              clearInterval(checkReady);
+              info.textContent = "Sesja OK \u2714 \u2014 kontynuuj\u0119...";
+              setTimeout(() => {
+                overlay.remove();
+                _captchaPromise = null;
+                if (isBurstReset()) _burstCount = 0;
+                resolve(true);
+              }, 500);
+              return;
+            }
+          } catch (e) { /* cross-origin — ignore */ }
+        }, 300);
+        // Captcha slider is auto-solved by the script injected into geo.captcha-delivery.com iframe
+        setTimeout(() => clearInterval(checkReady), 60000);
+      };
+    }
+
+    // For DataDome captcha or fallback — add manual controls
+    if (captchaType === "datadome") {
       const btnRow = document.createElement("div");
       btnRow.style.cssText = "margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;";
 
@@ -309,6 +415,7 @@ const showCaptchaAndWait = responseText => {
                 setTimeout(() => {
                   overlay.remove();
                   _captchaPromise = null;
+                  if (isBurstReset()) _burstCount = 0;
                   resolve(true);
                 }, 500);
               }
@@ -326,6 +433,7 @@ const showCaptchaAndWait = responseText => {
       doneBtn.addEventListener("click", () => {
         overlay.remove();
         _captchaPromise = null;
+        if (isBurstReset()) _burstCount = 0;
         resolve(true);
       });
 
@@ -338,11 +446,18 @@ const showCaptchaAndWait = responseText => {
       hint.style.cssText = "margin-top:12px;color:#999;font-size:12px;text-align:center;max-width:450px;";
       hint.textContent = "Jeśli widzisz 'You have been blocked' — kliknij 'Wyczyść cookies + napraw'. Iframe wczyta allegro.pl żeby odbudować cookies. Potem kliknij 'Kontynuuj'.";
       overlay.appendChild(hint);
+
+      // Auto-clear cookies after 1s if setting is enabled and autoClick allowed
+      if (isAutoClearCookies() && autoClick) {
+        setTimeout(() => {
+          clearBtn.click();
+        }, 1000);
+      }
     }
 
     document.body.appendChild(overlay);
 
-    if (captchaInfo.type === "allegro") {
+    if (captchaType === "allegro") {
       const wdctx = document.cookie.match("(^|;)\\s*wdctx\\s*=\\s*([^;]+)")?.pop() || "";
       iframe.onload = () => {
         iframe.contentWindow.postMessage({ type: "context", deviceCtx: wdctx }, captchaOrigin);
@@ -357,6 +472,7 @@ const showCaptchaAndWait = responseText => {
           window.removeEventListener("message", messageHandler);
           overlay.remove();
           _captchaPromise = null;
+          if (isBurstReset()) _burstCount = 0;
           resolve(true);
         } else if (event.data.type === "reload") {
           iframe.src = captchaSrc;
@@ -369,13 +485,17 @@ const showCaptchaAndWait = responseText => {
   return _captchaPromise;
 };
 
-const getOpboxJSON = async (link, retries = 3) => {
+const getOpboxJSON = async (link, retries = 10) => {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
     const res = await fetch(link, {
       headers: {
         accept: "application/vnd.opbox-web.v2+json",
       },
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     if (res.status === 503 && retries > 0) {
       console.warn(`503 Service Unavailable for ${link}, retrying in 5s... (${retries} retries left)`);
       await new Promise(r => setTimeout(r, 5000));
@@ -384,9 +504,9 @@ const getOpboxJSON = async (link, retries = 3) => {
     if (res.status === 429 || res.status === 403) {
       const text = await res.text();
       console.error(`Failed to get Opbox json - STATUS: ${res.status}`);
-      if (extractCaptchaURL(text) && retries > 0) {
-        console.log("Captcha detected, showing to user...");
-        const solved = await showCaptchaAndWait(text);
+      if (retries > 0) {
+        console.log(`${res.status} detected, showing captcha/allegro.pl to user...`);
+        const solved = await showCaptchaAndWait(text, { autoClick: res.status !== 429 });
         if (solved) {
           return getOpboxJSON(link, retries - 1);
         }
@@ -402,7 +522,7 @@ const getOpboxJSON = async (link, retries = 3) => {
   } catch (err) {
     console.error(`Failed to get offers for ${link}`);
     console.error(err.message);
-    // Network errors (ERR_CONNECTION_RESET, Failed to fetch) during rate limiting
+    // Network errors (ERR_CONNECTION_RESET, Failed to fetch, AbortError) during rate limiting
     if (retries > 0) {
       // If captcha is already showing, wait for it to resolve before retrying
       if (_captchaPromise) {
@@ -410,10 +530,13 @@ const getOpboxJSON = async (link, retries = 3) => {
         await _captchaPromise;
         return getOpboxJSON(link, retries - 1);
       }
-      // Otherwise backoff and retry (server may be throttling connections)
-      console.warn(`Network error, retrying in 5s... (${retries} retries left)`);
-      await new Promise(r => setTimeout(r, 5000));
-      return getOpboxJSON(link, retries - 1);
+      // Show allegro.pl in iframe to resolve block (same as 403)
+      console.log(`Network error (${err.name}), showing allegro.pl to resolve block for ${link}...`);
+      const solved = await showCaptchaAndWait("", { silentBlock: true });
+      if (solved) {
+        return getOpboxJSON(link, retries - 1);
+      }
+      return {};
     }
     return {};
   }
