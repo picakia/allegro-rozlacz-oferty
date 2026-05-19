@@ -297,8 +297,25 @@ const showCaptchaAndWait = responseText => {
         clearBtn.style.opacity = "0.6";
         iframe.style.opacity = "0.3";
         iframe.onload = () => {
-          clearBtn.textContent = "Załadowano ✓";
+          clearBtn.textContent = "Załadowano, czekam na potwierdzenie...";
           iframe.style.opacity = "1";
+          // Auto-continue once "Moje Allegro" button appears (confirms valid session)
+          const checkReady = setInterval(() => {
+            try {
+              const doc = iframe.contentDocument || iframe.contentWindow?.document;
+              if (doc && doc.querySelector('[data-role="header-dropdown-toggle"]')) {
+                clearInterval(checkReady);
+                clearBtn.textContent = "Sesja OK ✓ — kontynuuję...";
+                setTimeout(() => {
+                  overlay.remove();
+                  _captchaPromise = null;
+                  resolve(true);
+                }, 500);
+              }
+            } catch (e) { /* cross-origin — ignore */ }
+          }, 300);
+          // Fallback: stop checking after 30s, let user click manually
+          setTimeout(() => clearInterval(checkReady), 30000);
         };
         iframe.src = "https://allegro.pl/";
       });
