@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2026-05-19_18-26
+// @version      2026-05-26_19-00
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -375,8 +375,8 @@ const showCaptchaAndWait = (responseText, { silentBlock = false, autoClick = tru
       };
     }
 
-    // For DataDome captcha or fallback — add manual controls
-    if (captchaType === "datadome") {
+    // Manual controls — always show (Odśwież, Wyczyść cookies, Kontynuuj)
+    {
       const btnRow = document.createElement("div");
       btnRow.style.cssText = "margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;";
 
@@ -1142,6 +1142,14 @@ const restore = async () => {
   DOM.progressBar.bar.innerText = "100%";
   DOM.progressBar.text.innerText = `Finished! Total offers = ${uniqueProducts.length}`;
   console.log(DOM.progressBar.text.innerText);
+
+  // Clear DataDome cookies after finishing
+  const cookiesToClear = ["datadome", "wdctx"];
+  for (const name of cookiesToClear) {
+    document.cookie = name + "=; Max-Age=0; Domain=.allegro.pl; Path=/;";
+    document.cookie = name + "=; Max-Age=0; Path=/;";
+  }
+  console.log("Cleared DataDome cookies after restore finished.");
 };
 
 const zNode = document.createElement("div");
