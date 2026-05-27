@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore allegro ROZŁĄCZ V2
 // @namespace    http://filipgil.xyz/
-// @version      2026-05-27_14-13
+// @version      2026-05-27_14-30
 // @description  try to take over Allegro.pl
 // @author       You
 // @match        https://allegro.pl/kategoria/*
@@ -1154,10 +1154,16 @@ const restore = async () => {
 
 const zNode = document.createElement("div");
 zNode.className = "mpof_5r mpof_vs_s mp4t_8 m3h2_16 mse2_40";
-zNode.style.cssText = "display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:100%;box-sizing:border-box;";
+zNode.style.cssText = "display:flex;gap:8px;align-items:center;";
 zNode.innerHTML =
   '<button id="settingsButton" class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 msbw_rf mldj_rf mtag_rf mm2b_rf msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mx7m_1 m911_co mefy_co mnyp_co mdwl_co mlkp_6x mqvr_g3 _1405b_ZtYZA" style="display:inline-flex;align-items:center;gap:6px;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>' +
-  '<button id="myButton" class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 msbw_rf mldj_rf mtag_rf mm2b_rf msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mx7m_1 m911_co mefy_co mnyp_co mdwl_co mlkp_6x mqvr_g3 _1405b_ZtYZA">Rozłącz te same oferty</button>';
+  '<button id="myButton" class="mgn2_14 mp0t_0a m9qz_yp mp7g_oh mse2_40 mqu1_40 mtsp_ib mli8_k4 mp4t_0 m3h2_0 mryx_0 munh_0 msbw_rf mldj_rf mtag_rf mm2b_rf msa3_z4 mqen_m6 meqh_en m0qj_5r msts_n7 mh36_16 mvrt_16 mg9e_0 mj7a_0 mjir_sv m2ha_2 m8qd_vz mjt1_n2 b1kk0 mgmw_u5g mrmn_qo mrhf_u8 m31c_kb m0ux_fp b1g6n mx7m_1 m911_co mefy_co mnyp_co mdwl_co mlkp_6x mqvr_g3 _1405b_ZtYZA"><span class="mpof_z0_s">Rozłącz te same oferty</span><span class="mpof_5r mpof_z0_s mpof_z0_m" style="display:none;">Rozłącz</span></button>';
+// Mobile: show short label. Allegro uses mpof_z0_s (hide on small) / mpof_5r + show on small
+(function injectMobileStyle() {
+  const style = document.createElement("style");
+  style.textContent = "@media(max-width:767px){#myButton .mpof_z0_s{display:none!important}#myButton span:last-child{display:inline!important}}";
+  document.head.appendChild(style);
+})();
 
 function runWhenReady(readySelector, callback) {
   var numAttempts = 0;
